@@ -21,7 +21,6 @@ import webhook.teamcity.payload.WebHookPayloadManager;
 import webhook.teamcity.payload.WebHookPayloadTemplate;
 import webhook.teamcity.payload.WebHookTemplateManager;
 import webhook.teamcity.payload.WebHookTemplateManager.TemplateState;
-import webhook.teamcity.settings.WebHookProjectSettings;
 import webhook.teamcity.settings.WebHookSearchResult.Match;
 
 public class WebHookSettingsManagerImpl implements WebHookSettingsManager {
@@ -61,11 +60,11 @@ public class WebHookSettingsManagerImpl implements WebHookSettingsManager {
 	}
 
 	private Map<String,WebHookProjectSettings> rebuildProjectSettingsMap() {
-		Map<String,WebHookProjectSettings> projectSettingsMap = new LinkedHashMap<>();
+		Map<String,WebHookProjectSettings> projectSettings = new LinkedHashMap<>();
 		for (SProject sProject : this.myProjectManager.getActiveProjects()) {
-			projectSettingsMap.put(sProject.getProjectId(), getSettings(sProject.getProjectId()));
+			projectSettings.put(sProject.getProjectId(), getSettings(sProject.getProjectId()));
 		}
-		return projectSettingsMap;
+		return projectSettings;
 	}
 
 	@Override
@@ -248,6 +247,7 @@ public class WebHookSettingsManagerImpl implements WebHookSettingsManager {
 						.build();
 				configEnhanced.addTag(templateFormat)
 						.addTag(sProject.getExternalId())
+						.addTag(c.getEnabled() ? "enabled" : "disabled")
 						.addTag(c.getPayloadTemplate());
 
 				this.webhooksEnhanced.put(c.getUniqueKey(), configEnhanced);
