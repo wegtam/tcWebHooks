@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter @Builder @NoArgsConstructor @AllArgsConstructor
 public class WebHookSearchFilter {
 
+	@Builder.Default String show = null;
 	@Builder.Default String textSearch = null;
 	@Builder.Default String webhookId = null;
 	@Builder.Default String templateId = null;

@@ -2,7 +2,6 @@ package webhook.teamcity.extension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,23 +20,18 @@ import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.auth.AccessDeniedException;
-import jetbrains.buildServer.serverSide.auth.Permission;
-import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import jetbrains.buildServer.web.openapi.WebControllerManager;
-import jetbrains.buildServer.web.util.SessionUser;
-import webhook.teamcity.extension.bean.ProjectAndBuildWebhooksBean;
 import webhook.teamcity.extension.bean.ProjectWebHooksBean;
 import webhook.teamcity.history.WebAddressTransformer;
-import webhook.teamcity.payload.WebHookPayload;
 import webhook.teamcity.payload.WebHookPayloadManager;
-import webhook.teamcity.payload.WebHookPayloadTemplate;
 import webhook.teamcity.payload.WebHookTemplateResolver;
 import webhook.teamcity.settings.WebHookConfig;
 import webhook.teamcity.settings.WebHookSearchFilter;
 import webhook.teamcity.settings.WebHookSearchResult;
 import webhook.teamcity.settings.WebHookSettingsManager;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class WebHookSearchController extends BaseController {
 
 	private PluginDescriptor myPluginDescriptor;
@@ -68,9 +62,10 @@ public class WebHookSearchController extends BaseController {
         HashMap<String,Object> params = new HashMap<>();
         List<ProjectWebHooksBean> searchResults = new ArrayList<>();
         int resultCount = 0;
+        int allResultCount = 0;
         boolean resultsRestricted = false;
-
         for (Map.Entry<String, List<WebHookSearchResult>> entry : myWebHookSettingsManager.findWebHooksByProject(buildFilter(request)).entrySet()) {
+        	allResultCount += entry.getValue().size();
         	try {
 	        	SProject project = myProjectManager.findProjectById(entry.getKey());
 	        	ProjectWebHooksBean result =
@@ -87,6 +82,7 @@ public class WebHookSearchController extends BaseController {
         params.put("jspHome", myPluginDescriptor.getPluginResourcesPath());
         params.put("searchResults", searchResults);
         params.put("resultCount", resultCount);
+        params.put("allResultCount", allResultCount);
 		params.put("payloadFormats", myWebHookPayloadManager.getTemplatedFormats());
 		params.put("resultsRestricted", resultsRestricted);
 
@@ -103,6 +99,7 @@ public class WebHookSearchController extends BaseController {
 
 	private WebHookSearchFilter buildFilter(HttpServletRequest request) {
     	WebHookSearchFilter filter = WebHookSearchFilter.builder()
+    			.show(request.getParameter("show"))
     			.formatShortName(request.getParameter("format"))
     			.templateId(request.getParameter("templateId"))
     			.textSearch(request.getParameter("search"))

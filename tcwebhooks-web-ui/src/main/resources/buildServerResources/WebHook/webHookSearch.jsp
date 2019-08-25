@@ -36,7 +36,7 @@
 
     <script type="text/javascript">
       BS.Navigation.items = [
-        {title: "Administration", url: '<c:url value="/admin/admin.html"/>'},
+        {title: "WebHooks", url: '<c:url value="/webhooks/index.html"/>'},
         {title: '${title}', selected: true}
       ];
     </script>
@@ -51,7 +51,10 @@
 				<p>There are no matching WebHooks found.</p>
 		</c:if>
 		<c:if test="${fn:length(searchResults) > 0}" >
-				<p>There are <strong>${resultCount}</strong> matching WebHooks found in <strong>${fn:length(searchResults)}</strong> projects.</p>
+				<p><strong>${resultCount}</strong> matching WebHooks found in <strong>${fn:length(searchResults)}</strong> projects.</p>
+	    <c:if test="${resultsRestricted}" >
+	    		<p>Note: these results have been filtered to only show webhooks from projects you are permissioned to view. The total matching webhooks is ${allResultCount}.
+	    </c:if>
 	    <br/>
 	    <table id="webHookSearchTable" class="settings">
 			<c:forEach items="${searchResults}" var="projectList">
