@@ -20,13 +20,16 @@ import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.auth.AccessDeniedException;
+import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import jetbrains.buildServer.web.openapi.WebControllerManager;
+import jetbrains.buildServer.web.util.SessionUser;
 import webhook.teamcity.extension.bean.ProjectWebHooksBean;
 import webhook.teamcity.history.WebAddressTransformer;
 import webhook.teamcity.payload.WebHookPayloadManager;
 import webhook.teamcity.payload.WebHookTemplateResolver;
 import webhook.teamcity.settings.WebHookConfig;
+import webhook.teamcity.settings.WebHookConfigEnhanced;
 import webhook.teamcity.settings.WebHookSearchFilter;
 import webhook.teamcity.settings.WebHookSearchResult;
 import webhook.teamcity.settings.WebHookSettingsManager;
@@ -58,7 +61,6 @@ public class WebHookSearchController extends BaseController {
 
     @Nullable
     protected ModelAndView doHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         HashMap<String,Object> params = new HashMap<>();
         List<ProjectWebHooksBean> searchResults = new ArrayList<>();
         int resultCount = 0;
@@ -89,10 +91,10 @@ public class WebHookSearchController extends BaseController {
         return new ModelAndView(myPluginDescriptor.getPluginResourcesPath() + "WebHook/webHookSearch.jsp", params);
     }
 
-    private List<WebHookConfig> getListOfWebHookConfigs(List<WebHookSearchResult> searchResults) {
-    	List<WebHookConfig> configs = new ArrayList<>();
+    private List<WebHookConfigEnhanced> getListOfWebHookConfigs(List<WebHookSearchResult> searchResults) {
+    	List<WebHookConfigEnhanced> configs = new ArrayList<>();
     	for (WebHookSearchResult result : searchResults) {
-    		configs.add(result.getWebHookConfig());
+    		configs.add(result.getWebHookConfigEnhanced());
     	}
 		return configs;
 	}
@@ -106,6 +108,7 @@ public class WebHookSearchController extends BaseController {
     			.urlSubString(request.getParameter("url"))
     			.webhookId(request.getParameter("webhookId"))
 				.projectExternalId(request.getParameter("projectId"))
+				.buildTypeExternalId(request.getParameter("buildTypeId"))
     		.build();
 
     	for (String tag: getTags(request)) {

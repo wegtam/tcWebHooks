@@ -15,6 +15,7 @@ import webhook.teamcity.TeamCityIdResolver;
 import webhook.teamcity.payload.WebHookPayload;
 import webhook.teamcity.payload.WebHookPayloadTemplate;
 import webhook.teamcity.settings.WebHookConfig;
+import webhook.teamcity.settings.WebHookConfigEnhanced;
 import webhook.teamcity.settings.WebHookProjectSettings;
 
 
@@ -30,7 +31,7 @@ public class ProjectWebHooksBean {
 		return webHookList.values();
 	}
 
-	private ProjectWebHooksBean(SProject project, boolean projectWebHooksEnabled) {
+	protected ProjectWebHooksBean(SProject project, boolean projectWebHooksEnabled) {
 		projectId = TeamCityIdResolver.getInternalProjectId(project);
 		externalProjectId = TeamCityIdResolver.getExternalProjectId(project);
 		webHookList = new LinkedHashMap<>();
@@ -117,10 +118,10 @@ public class ProjectWebHooksBean {
 
 	}
 
-	/** A builder which takes a list of {@link WebHookConfig} rather than the settings object itself.<br>
+	/** A builder which takes a list of {@link WebHookConfigEnhanced} rather than the settings object itself.<br>
 	 * Does not create a place holder "new" webhook config.
 	 *
-	 * @param webHookConfigs : A List &lt;WebHookConfig&gt;
+	 * @param webHookConfigs : A List &lt;WebHookConfigEnhanced&gt;
 	 * @param project : A TeamCity project
 	 * @param registeredFormats : A collection of {@link WebHookPayload}s.
 	 * @param templateList : A list of {@link WebHookPayloadTemplate}s.
@@ -128,7 +129,7 @@ public class ProjectWebHooksBean {
 	 * @return a {@link ProjectAndBuildWebhooksBean} which represents a project and its webhooks.
 	 */
 	public static ProjectWebHooksBean buildWithoutNew(
-			List<WebHookConfig> webHookConfigs,
+			List<WebHookConfigEnhanced> webHookConfigs,
 			SProject project,
 			Collection<WebHookPayload> registeredFormats,
 			List<WebHookPayloadTemplate> templateList,
@@ -138,7 +139,7 @@ public class ProjectWebHooksBean {
 		List<SBuildType> projectBuildTypes = TeamCityIdResolver.getOwnBuildTypes(project);
 
 		/* Iterate over the rest of the webhooks in this project and add them to the json config */
-		for (WebHookConfig config : webHookConfigs){
+		for (WebHookConfigEnhanced config : webHookConfigs){
 			addWebHookConfigHolder(bean, projectBuildTypes, config, registeredFormats, templateList);
 		}
 
@@ -156,6 +157,20 @@ public class ProjectWebHooksBean {
 													config.isEnabledForBuildType(sBuildType)
 													)
 										);
+		}
+		bean.webHookList.put(holder.getUniqueKey(), holder);
+	}
+	
+	private static void addWebHookConfigHolder(ProjectWebHooksBean bean,
+			List<SBuildType> projectBuildTypes, WebHookConfigEnhanced config, Collection<WebHookPayload> registeredPayloads, List<WebHookPayloadTemplate> templateList) {
+		WebhookConfigAndBuildTypeListHolder holder = new WebhookConfigAndBuildTypeListHolder(config, registeredPayloads, templateList);
+		for (SBuildType sBuildType : projectBuildTypes){
+			holder.addWebHookBuildType(new WebhookBuildTypeEnabledStatusBean(
+					sBuildType.getBuildTypeId(),
+					sBuildType.getName(),
+					config.getWebHookConfig().isEnabledForBuildType(sBuildType)
+					)
+					);
 		}
 		bean.webHookList.put(holder.getUniqueKey(), holder);
 	}

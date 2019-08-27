@@ -2,15 +2,19 @@ package webhook.teamcity.extension.bean;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
 import webhook.teamcity.BuildStateEnum;
+import webhook.teamcity.history.GeneralisedWebAddress;
 import webhook.teamcity.payload.PayloadTemplateEngineType;
 import webhook.teamcity.payload.WebHookPayload;
 import webhook.teamcity.payload.WebHookPayloadTemplate;
 import webhook.teamcity.settings.WebHookConfig;
+import webhook.teamcity.settings.WebHookConfigEnhanced;
 
 @Getter
 public class WebhookConfigAndBuildTypeListHolder {
@@ -34,6 +38,8 @@ public class WebhookConfigAndBuildTypeListHolder {
 
 	@Setter
 	private WebhookAuthenticationConfigBean authConfig = null;
+	private GeneralisedWebAddress generalisedWebAddress;
+	private Set<String> tags = new LinkedHashSet<>();
 
 	public WebhookConfigAndBuildTypeListHolder(WebHookConfig config, Collection<WebHookPayload> registeredPayloads, List<WebHookPayloadTemplate> templateList) {
 		url = config.getUrl();
@@ -70,6 +76,13 @@ public class WebhookConfigAndBuildTypeListHolder {
 			this.payloadFormatForWeb = "Unknown Template: '" + payloadTemplate + "'";
 		}
 	}
+	
+	public WebhookConfigAndBuildTypeListHolder(WebHookConfigEnhanced config, Collection<WebHookPayload> registeredPayloads, List<WebHookPayloadTemplate> templateList) {
+		this(config.getWebHookConfig(), registeredPayloads, templateList);
+		this.generalisedWebAddress = config.getGeneralisedWebAddress();
+		this.tags.addAll(config.getTags());
+	}
+
 
 	private void addBuildStatesFromConfig(WebHookConfig config) {
 		for (BuildStateEnum state : config.getBuildStates().getStateSet()){
@@ -90,6 +103,13 @@ public class WebhookConfigAndBuildTypeListHolder {
 
 	public void addWebHookBuildType(WebhookBuildTypeEnabledStatusBean status){
 		this.builds.add(status);
+	}
+	
+	public String getGeneralisedUrl() {
+		if (this.generalisedWebAddress != null) {
+			return this.generalisedWebAddress.getGeneralisedAddress();
+		}
+		return "Unable to display GeneralisedUrl";
 	}
 
 }

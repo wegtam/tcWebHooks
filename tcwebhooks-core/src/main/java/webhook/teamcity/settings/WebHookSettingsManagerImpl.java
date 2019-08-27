@@ -12,11 +12,13 @@ import org.jetbrains.annotations.NotNull;
 
 import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.serverSide.ProjectManager;
+import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.settings.ProjectSettingsManager;
 import webhook.teamcity.BuildState;
 import webhook.teamcity.WebHookListener;
 import webhook.teamcity.auth.WebHookAuthConfig;
+import webhook.teamcity.history.WebAddressTransformer;
 import webhook.teamcity.payload.WebHookPayload;
 import webhook.teamcity.payload.WebHookPayloadManager;
 import webhook.teamcity.payload.WebHookPayloadTemplate;
@@ -30,6 +32,7 @@ public class WebHookSettingsManagerImpl implements WebHookSettingsManager {
 	@NotNull private final ProjectSettingsManager myProjectSettingsManager;
 	@NotNull private final WebHookTemplateManager myWebHookTemplateManager;
 	@NotNull private final WebHookPayloadManager myWebHookPayloadManager;
+	@NotNull private final WebAddressTransformer myWebAddressTransformer;
 
 	/** A Map of <code>projectInternId</code> to {@link WebHookProjectSettings} */
 	private Map<String, WebHookProjectSettings> projectSettingsMap;
@@ -42,12 +45,14 @@ public class WebHookSettingsManagerImpl implements WebHookSettingsManager {
 			@NotNull final ProjectManager projectManager,
 			@NotNull final ProjectSettingsManager projectSettingsManager,
 			@NotNull final WebHookTemplateManager webHookTemplateManager,
-			@NotNull final WebHookPayloadManager webHookPayloadManager)
+			@NotNull final WebHookPayloadManager webHookPayloadManager,
+			@NotNull final WebAddressTransformer webAddressTransformer)
 	{
 		this.myProjectManager = projectManager;
 		this.myProjectSettingsManager = projectSettingsManager;
 		this.myWebHookTemplateManager = webHookTemplateManager;
 		this.myWebHookPayloadManager = webHookPayloadManager;
+		this.myWebAddressTransformer = webAddressTransformer;
 	}
 
 	@Override
@@ -185,12 +190,42 @@ public class WebHookSettingsManagerImpl implements WebHookSettingsManager {
 			doProjectIdSearch(filter, e, result);
 			doWebHookIdSearch(filter, e, result);
 			doTagsSearch(filter, e, result);
-			
+			doBuildTypeIdSearch(filter, e, result);
 		}
 
 		if ( ! result.getMatches().isEmpty() ) {
 			result.setWebHookConfigEnhanced(e);
 			webhookResultList.add(result);
+		}
+	}
+
+	/**
+	 * Checks if:
+	 * <ul><li>sBuildType is explicitly listed as a build in the webhook config (by its internal id),
+	 * <li>or, sBuildType is in the same project as the webhook, and project has all builds in project enabled
+	 * <li>or, sBuildType is in a sub-project of the webhook project, and the webhook has sub-projects enabled.</ul>
+	 * @param filter
+	 * @param e
+	 * @param result
+	 */
+	private void doBuildTypeIdSearch(WebHookSearchFilter filter, WebHookConfigEnhanced e, WebHookSearchResult result) {
+		if (filter.getBuildTypeExternalId() != null && !filter.getBuildTypeExternalId().isEmpty()) {
+			SBuildType myBuildType = myProjectManager.findBuildTypeByExternalId(filter.getBuildTypeExternalId());
+			if (myBuildType != null &&
+				(	
+					(
+						myBuildType.getProjectExternalId().equalsIgnoreCase(e.getProjectExternalId())
+					  && e.getWebHookConfig().isEnabledForBuildType(myBuildType)
+					)
+				|| 	(
+						e.getWebHookConfig().isEnabledForSubProjects() 
+					  && myProjectManager.findProjectByExternalId(e.getProjectExternalId()).getProjects().contains(myBuildType.getProject())
+					)
+				)
+			)
+			{
+				result.addMatch(Match.BUILD_TYPE);
+			}
 		}
 	}
 
@@ -298,11 +333,12 @@ public class WebHookSettingsManagerImpl implements WebHookSettingsManager {
 						.templateId(c.getPayloadTemplate())
 						.templateDescription(templateName)
 						.webHookConfig(c)
+						.generalisedWebAddress(myWebAddressTransformer.getGeneralisedHostName(c.getUrl()))
 						.build();
 				configEnhanced.addTag(templateFormat)
-						.addTag(sProject.getExternalId())
 						.addTag(c.getEnabled() ? "enabled" : "disabled")
-						.addTag(c.getPayloadTemplate());
+						.addTag(c.getPayloadTemplate())
+						.addTag(configEnhanced.getGeneralisedWebAddress().getGeneralisedAddress());
 				if (c.getAuthenticationConfig() != null) {
 					configEnhanced.addTag("authenticated").addTag(c.getAuthenticationConfig().getType());
 				}

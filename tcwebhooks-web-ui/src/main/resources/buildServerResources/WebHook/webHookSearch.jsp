@@ -59,7 +59,7 @@
 	    <table id="webHookSearchTable" class="settings">
 			<c:forEach items="${searchResults}" var="projectList">
 	   		<thead>
-			<tr class="projectTitle"><th colspan="6">${projectList.sensibleProjectFullName}
+			<tr class="projectTitle"><th colspan="6"><a href="search.html?projectId=${projectList.externalProjectId}">${projectList.sensibleProjectFullName}</a>
 			<span class="webhookEditProjectLink"><a href="index.html?projectId=${projectList.externalProjectId}">Edit project WebHooks</a></span>
 			<%--<span class="webhookCreate">Create new WebHook for this project</span> --%></th></tr>
 		   		<tr style="background-color: rgb(245, 245, 245);">
@@ -67,22 +67,29 @@
 					<th class="name">Format</th>
 					<th class="name">Build Events</th>
 					<th class="value" style="width:20%;" <%--colspan="3"--%>>Enabled Builds</th>
+					<th class="value" style="width:20%;" <%--colspan="3"--%>>Tags</th>
 				</tr>
 			</thead>
 			<tbody>
 				<c:forEach items="${projectList.webHookList}" var="hook">
 
 					<tr id="viewRow_${hook.uniqueKey}" class="webHookRow">
-						<td class="name <%--highlight--%>" <%-- onclick="WebHooksPlugin.showEditDialog('${hook.uniqueKey}','#hookPane');"--%>><c:out value="${hook.url}" /></td>
-
-								<c:choose>
-									<c:when test="${hook.payloadTemplate == 'none'}">
-						<td class="value <%--highlight--%> webHookRowItemFormat" style="width:15%;"><c:out value="${hook.payloadFormatForWeb}" /></td>
-									</c:when>
-									<c:otherwise>
-						<td class="value <%--highlight--%> webHookRowItemFormat" style="width:15%;"><a href="template.html?template=<c:out value="${hook.payloadTemplate}"/>"><c:out value="${hook.payloadFormatForWeb}" /></a></td>
-									</c:otherwise>
-								</c:choose>
+					<td class="name <%--highlight--%>" <%-- onclick="WebHooksPlugin.showEditDialog('${hook.uniqueKey}','#hookPane');"--%>>
+							<c:if test="${not afn:permissionGrantedForProjectWithId(projectList.projectId, 'EDIT_PROJECT')}">
+								<span title="You do not have permission to see the full URL for this webhook (no project edit permission)">** <c:out value="${hook.generalisedUrl}" /></span>
+							</c:if>
+							<c:if test="${afn:permissionGrantedForProjectWithId(projectList.projectId, 'EDIT_PROJECT')}">
+								<c:out value="${hook.url}" />
+							</c:if>
+					</td>
+							<c:choose>
+								<c:when test="${hook.payloadTemplate == 'none'}">
+					<td class="value <%--highlight--%> webHookRowItemFormat" style="width:15%;"><c:out value="${hook.payloadFormatForWeb}" /></td>
+								</c:when>
+								<c:otherwise>
+					<td class="value <%--highlight--%> webHookRowItemFormat" style="width:15%;"><a href="template.html?template=<c:out value="${hook.payloadTemplate}"/>"><c:out value="${hook.payloadFormatForWeb}" /></a></td>
+								</c:otherwise>
+							</c:choose>
 
 
 						<td class="value <%--highlight--%>" style="width:15%;" <%-- onclick="WebHooksPlugin.showEditDialog('${hook.uniqueKey}','#hookPane');"--%>><c:out value="${hook.enabledEventsListForWeb}" /></td>
@@ -91,9 +98,16 @@
 						<td class="edit highlight"><a onclick="WebHooksPlugin.showEditDialog('${hook.uniqueKey}','#hookPane');" href="javascript://">edit</a></td>
 						<td class="edit highlight"><a onclick="WebHooksPlugin.showDeleteDialog('${hook.uniqueKey}');" href="javascript://">delete</a></td>
 						 --%>
+					<td>
+							<ul class="commalist webhookTags">
+								<c:forEach items="${hook.tags}" var="tag">
+									<li><a href="search.html?tag=<c:out value="${tag}" />"><c:out value="${tag}" /></a></li>	
+								</c:forEach>
+							</ul>	
+					</td>
 					</tr>
 				</c:forEach>
-				<tr class="blankRow"><td colspan="4">&nbsp;</td></tr>
+				<tr class="blankRow"><td colspan="5">&nbsp;</td></tr>
 			</tbody>
 			</c:forEach>
 		</table>

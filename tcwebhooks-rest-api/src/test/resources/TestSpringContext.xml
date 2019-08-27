@@ -53,6 +53,10 @@
      <bean id="webHookSettingsManager" 
      	class="webhook.teamcity.settings.WebHookSettingsManagerImpl" 
      	/>
+     			
+     <bean id="webAddressTransformer" 
+     	class="webhook.teamcity.history.WebAddressTransformerImpl" 
+     	/>
 
      <bean id="webHookProjectSettingsFactory" 
      	class="webhook.teamcity.settings.WebHookProjectSettingsFactory" 

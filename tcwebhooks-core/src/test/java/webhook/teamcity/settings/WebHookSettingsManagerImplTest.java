@@ -20,6 +20,7 @@ import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.settings.ProjectSettingsManager;
 import webhook.teamcity.BuildStateEnum;
+import webhook.teamcity.history.WebAddressTransformerImpl;
 import webhook.teamcity.payload.content.ExtraParametersMap;
 import webhook.teamcity.payload.template.ElasticSearchXmlWebHookTemplate;
 import webhook.teamcity.settings.entity.WebHookTemplateJaxHelperImpl;
@@ -68,7 +69,8 @@ public class WebHookSettingsManagerImplTest {
 														projectManager, 
 														projectSettingsManager, 
 														framework.getWebHookTemplateManager(), 
-														framework.getWebHookPayloadManager());
+														framework.getWebHookPayloadManager(), 
+														new WebAddressTransformerImpl());
 		webHookSettingsManager.initialise();
 	}
 

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import webhook.teamcity.BuildStateEnum;
+import webhook.teamcity.history.GeneralisedWebAddress;
 
 /**
  * A class used internally by the {@link WebHookSettingsManager}
@@ -24,8 +25,8 @@ public class WebHookConfigEnhanced {
 	private String payloadFormat;
 	private String payloadFormatDescription;
 	private String projectExternalId;
-	private Set<String> buildTypeExternalIds;
 	private Set<BuildStateEnum> buildStates;
+	private GeneralisedWebAddress generalisedWebAddress;
 
 	public WebHookConfigEnhanced addTag(String tag) {
 		if (! tag.isEmpty() ) {
@@ -43,6 +44,13 @@ public class WebHookConfigEnhanced {
 							 .payloadFormat(this.payloadFormat)
 							 .payloadFormatDescription(this.payloadFormatDescription)
 							 .projectExternalId(this.projectExternalId)
+							 .buildStates(new TreeSet<BuildStateEnum>(this.buildStates))
+							 .generalisedWebAddress(
+									 GeneralisedWebAddress.build(
+											 this.generalisedWebAddress.getGeneralisedAddress(), 
+											 this.generalisedWebAddress.getAddressType()
+											 )
+									 )
 							 .build();
 		if (this.tags != null && ! this.tags.isEmpty()) {
 			w.tags = new TreeSet<>(this.tags);
