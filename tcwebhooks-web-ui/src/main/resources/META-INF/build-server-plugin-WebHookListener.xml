@@ -294,6 +294,14 @@
 		class="webhook.teamcity.DeferrableServiceManagerImpl"
 		/>
 		
+	<bean id="teamCityCoreFacade"
+		class="webhook.teamcity.TeamCityCoreFacadeImpl"
+		/>
+		
+	<bean id="webHookParameterStore"
+		class="webhook.teamcity.settings.project.WebHookParameterStoreImpl"
+		/>
+		
 	<bean id="webHookVariableResolverManager"		
 		class="webhook.teamcity.payload.variableresolver.WebHookVariableResolverManagerImpl"
 		/>

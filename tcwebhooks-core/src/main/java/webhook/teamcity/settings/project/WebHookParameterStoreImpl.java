@@ -27,13 +27,13 @@ public class WebHookParameterStoreImpl implements WebHookParameterStore {
     }
     
     @Override
-    public WebHookParameter addWebHookParameter(@NotNull WebHookParameter webhookParameter) {
+    public WebHookParameter addWebHookParameter(@NotNull String projectInternalId, @NotNull WebHookParameter webhookParameter) {
         Map<String, String> params = WebHookParameterFactory.asMap(webhookParameter);
-        SProject sProject = teamCityCore.findProjectByIntId(webhookParameter.getProjectInternalId());
-        sProject.addFeature(PROJECT_FEATURE_TYPE, params);
-        teamCityCore.persist(webhookParameter.getProjectInternalId(), "ChatClientConfig added");
-        Loggers.SERVER.info("WebHookParameter '" + webhookParameter.getName() + "' is created in the project " + webhookParameter.getProjectInternalId());
-        return webhookParameter;
+        SProject sProject = teamCityCore.findProjectByIntId(projectInternalId);
+        SProjectFeatureDescriptor featureDescriptor = sProject.addFeature(PROJECT_FEATURE_TYPE, params);
+        teamCityCore.persist(projectInternalId, "WebHookParameter added");
+        Loggers.SERVER.info("WebHookParameter '" + webhookParameter.getName() + "' is created in the project " + projectInternalId);
+        return fromProjectFeature(featureDescriptor);
     }
 
     @NotNull
@@ -48,8 +48,8 @@ public class WebHookParameterStoreImpl implements WebHookParameterStore {
     }
 
     @Override
-    public WebHookParameter removeWebHookParameter(@NotNull WebHookParameter webhookParameter) {
-        SProject sProject = teamCityCore.findProjectByIntId(webhookParameter.getProjectInternalId());
+    public WebHookParameter removeWebHookParameter(@NotNull String projectInternalId, @NotNull WebHookParameter webhookParameter) {
+        SProject sProject = teamCityCore.findProjectByIntId(projectInternalId);
         return removeWebHookParameter(sProject, webhookParameter.getName());
     }
     
@@ -65,8 +65,8 @@ public class WebHookParameterStoreImpl implements WebHookParameterStore {
     }
 
     @Override
-    public boolean updateWebHookParameter(@NotNull WebHookParameter webhookParameter, @NotNull String description) {
-    	SProject project = teamCityCore.findProjectByIntId(webhookParameter.getProjectInternalId());
+    public boolean updateWebHookParameter(@NotNull String projectInternalId, @NotNull WebHookParameter webhookParameter, @NotNull String description) {
+    	SProject project = teamCityCore.findProjectByIntId(projectInternalId);
     	if (project == null) {
     		return false;
     	}
@@ -91,12 +91,18 @@ public class WebHookParameterStoreImpl implements WebHookParameterStore {
     	return params;
     }
     private WebHookParameter fromProjectFeature(SProjectFeatureDescriptor feature) {
-        return WebHookParameterFactory.readFrom(feature.getParameters());
+        return WebHookParameterFactory.readFrom(feature.getId(), feature.getParameters());
     }
 
 	@Override
 	public WebHookParameter getWebHookParameter(SProject sProject, String parameterName) {
 		SProjectFeatureDescriptor feature = filterFeatureDescriptors(sProject.getOwnFeaturesOfType(PROJECT_FEATURE_TYPE), parameterName);
+		return feature != null ? fromProjectFeature(feature) : null; 
+	}
+	
+	@Override
+	public WebHookParameter getWebHookParameterById(SProject sProject, String parameterId) {
+		SProjectFeatureDescriptor feature = sProject.findFeatureById(parameterId);
 		return feature != null ? fromProjectFeature(feature) : null; 
 	}
 

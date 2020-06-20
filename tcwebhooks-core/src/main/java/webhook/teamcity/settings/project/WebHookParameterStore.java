@@ -17,13 +17,15 @@ public interface WebHookParameterStore {
 	@Nullable
 	public WebHookParameter getWebHookParameter(SProject sProject, String parameterName);
 	@Nullable
+	public WebHookParameter getWebHookParameterById(SProject sProject, String parameterId);
+	@Nullable
 	public WebHookParameter findWebHookParameter(SProject sProject, String parameterName);
 	public List<WebHookParameter> getAllWebHookParameters(SProject sProject);
 	public List<WebHookParameter> getOwnWebHookParameters(SProject sProject);
 	
-	public WebHookParameter addWebHookParameter(WebHookParameter webhookParameter);
-	public boolean updateWebHookParameter(WebHookParameter webhookParameter, String description);
-	public WebHookParameter removeWebHookParameter(WebHookParameter webhookParameter);
+	public WebHookParameter addWebHookParameter(String projectInternalId, WebHookParameter webhookParameter);
+	public boolean updateWebHookParameter(String projectInternalId, WebHookParameter webhookParameter, String description);
+	public WebHookParameter removeWebHookParameter(String projectInternalId, WebHookParameter webhookParameter);
 	public WebHookParameter removeWebHookParameter(SProject project, String name);
 
 }
