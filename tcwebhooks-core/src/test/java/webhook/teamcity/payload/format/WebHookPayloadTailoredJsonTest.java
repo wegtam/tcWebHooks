@@ -18,7 +18,7 @@ import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.payload.PayloadTemplateEngineType;
 import webhook.teamcity.payload.WebHookPayloadDefaultTemplates;
 import webhook.teamcity.payload.WebHookPayloadManager;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.content.WebHookPayloadContent;
 import webhook.teamcity.payload.content.WebHookPayloadContentAssemblyException;
 import webhook.teamcity.payload.variableresolver.VariableResolverFactory;
@@ -100,9 +100,9 @@ public class WebHookPayloadTailoredJsonTest {
 		
 		WebHookPayloadTailoredJson whp = new WebHookPayloadTailoredJson(null, variableResolverManager);
 		
-		ExtraParametersMap extraParameters = new ExtraParametersMap(new TreeMap<String,String>());
-		ExtraParametersMap teamcityProperties = new ExtraParametersMap(new TreeMap<String,String>());
-		ExtraParametersMap templates = new ExtraParametersMap(new TreeMap<String,String>());
+		ExtraParameters extraParameters = new ExtraParameters(new TreeMap<String,String>());
+		ExtraParameters teamcityProperties = new ExtraParameters(new TreeMap<String,String>());
+		ExtraParameters templates = new ExtraParameters(new TreeMap<String,String>());
 		templates.put(WebHookPayloadDefaultTemplates.HTML_BUILDSTATUS_TEMPLATE, "test template");
 		
 		WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
@@ -118,11 +118,11 @@ public class WebHookPayloadTailoredJsonTest {
 		
 		WebHookPayloadTailoredJson whp = new WebHookPayloadTailoredJson(null, variableResolverManager);
 		
-		ExtraParametersMap extraParameters = new ExtraParametersMap(new TreeMap<String,String>());
+		ExtraParameters extraParameters = new ExtraParameters(new TreeMap<String,String>());
 		extraParameters.put("body", "{ \"someBody\" : \"This is a body for project ${projectName} \"}");
 		
-		ExtraParametersMap teamcityProperties = new ExtraParametersMap(new TreeMap<String,String>());
-		ExtraParametersMap templates = new ExtraParametersMap(new TreeMap<String,String>());
+		ExtraParameters teamcityProperties = new ExtraParameters(new TreeMap<String,String>());
+		ExtraParameters templates = new ExtraParameters(new TreeMap<String,String>());
 		templates.put(WebHookPayloadDefaultTemplates.HTML_BUILDSTATUS_TEMPLATE, "test template");
 		
 		WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);

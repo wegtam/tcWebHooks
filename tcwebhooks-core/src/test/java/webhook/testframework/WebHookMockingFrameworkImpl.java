@@ -58,7 +58,7 @@ import webhook.teamcity.payload.WebHookPayloadTemplate;
 import webhook.teamcity.payload.WebHookTemplateContent;
 import webhook.teamcity.payload.WebHookTemplateManager;
 import webhook.teamcity.payload.WebHookTemplateResolver;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.content.WebHookPayloadContent;
 import webhook.teamcity.payload.format.WebHookPayloadJson;
 import webhook.teamcity.payload.format.WebHookPayloadJsonTemplate;
@@ -328,7 +328,7 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 		};
 	}
 
-	public static WebHookMockingFramework create(BuildStateEnum buildState, ExtraParametersMap extraParameters, ExtraParametersMap teamcityProperties) {
+	public static WebHookMockingFramework create(BuildStateEnum buildState, ExtraParameters extraParameters, ExtraParameters teamcityProperties) {
 		WebHookMockingFrameworkImpl framework = new WebHookMockingFrameworkImpl();
 		framework.buildstateEnum = buildState;
 		framework.extraParameters = extraParameters;

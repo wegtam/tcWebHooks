@@ -63,7 +63,7 @@ import webhook.teamcity.payload.WebHookPayloadManager;
 import webhook.teamcity.payload.WebHookPayloadTemplate;
 import webhook.teamcity.payload.WebHookTemplateManager;
 import webhook.teamcity.payload.WebHookTemplateResolver;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.format.WebHookPayloadJsonTemplate;
 import webhook.teamcity.payload.template.SlackComCompactXmlWebHookTemplate;
 import webhook.teamcity.payload.variableresolver.WebHookVariableResolverManager;
@@ -153,7 +153,7 @@ public class WebHookUserRequestedExecutorImplTest extends WebHookTestServerTestB
 		usernamePasswordAuthenticatorFactory.register();
 		
 		
-		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, new ExtraParametersMap(new HashMap<String,String>()), new ExtraParametersMap(new HashMap<String,String>()));
+		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, new ExtraParameters(new HashMap<String,String>()), new ExtraParameters(new HashMap<String,String>()));
 		framework.loadWebHookProjectSettingsFromConfigXml(new File("src/test/resources/project-settings-test-slackcompact-jsonTemplate-AllEnabled.xml"));
 		webHookProjectSettings = framework.getWebHookProjectSettings(); 
 

@@ -13,15 +13,15 @@ import webhook.teamcity.extension.bean.template.RegisteredWebHookTemplateBean;
 import webhook.teamcity.extension.bean.template.RegisteredWebHookTemplateBeanGsonSerialiser;
 import webhook.teamcity.extension.util.ProjectHistoryResolver;
 import webhook.teamcity.extension.util.ProjectHistoryResolver.ProjectHistoryBean;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.testframework.WebHookMockingFramework;
 import webhook.testframework.WebHookMockingFrameworkImpl;
 
 public class ProjectWebHooksBeanTest {
 
 	SortedMap<String, String> map = new TreeMap<String, String>();
-	ExtraParametersMap  extraParameters  = new ExtraParametersMap(map); 
-	ExtraParametersMap  teamcityProperties  = new ExtraParametersMap(map); 
+	ExtraParameters  extraParameters  = new ExtraParameters(map); 
+	ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
 	WebHookMockingFramework framework;
 
 	@Test

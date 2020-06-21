@@ -16,7 +16,7 @@ import jetbrains.buildServer.serverSide.SFinishedBuild;
 import webhook.teamcity.MockSBuildType;
 import webhook.teamcity.MockSProject;
 import webhook.teamcity.MockSRunningBuild;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.variableresolver.VariableResolverFactory;
 import webhook.teamcity.payload.variableresolver.standard.WebHooksBeanUtilsVariableResolverFactory;
 
@@ -29,7 +29,7 @@ public class VariableMessageBuilderTestBase {
 	protected SBuildServer sBuildServer;
 	protected SortedMap<String, String> extraParameters;
 	protected SortedMap<String, String> teamcityProperties;
-	protected Map<String, ExtraParametersMap> allProperties;
+	protected Map<String, ExtraParameters> allProperties;
 	protected VariableResolverFactory variableResolverFactory = new WebHooksBeanUtilsVariableResolverFactory();
 
 	@Before
@@ -54,8 +54,8 @@ public class VariableMessageBuilderTestBase {
 		sBuildServer = mock(SBuildServer.class);
 		when(sBuildServer.getRootUrl()).thenReturn("http://test.url");
 		allProperties = new LinkedHashMap<>();
-		allProperties.put("teamcity", new ExtraParametersMap(teamcityProperties));
-		allProperties.put("webhook", new ExtraParametersMap(extraParameters));
+		allProperties.put("teamcity", new ExtraParameters(teamcityProperties));
+		allProperties.put("webhook", new ExtraParameters(extraParameters));
 	}
 
 }

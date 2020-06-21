@@ -20,7 +20,7 @@ import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.TestingWebHookHttpClientFactoryImpl;
 import webhook.teamcity.TestingWebHookHttpClientFactoryImpl.TestableHttpClient;
 import webhook.teamcity.WebHookHttpClientFactory;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.settings.WebHookMainSettings;
 import webhook.testframework.WebHookMockingFramework;
 import webhook.testframework.WebHookMockingFrameworkImpl;
@@ -40,8 +40,8 @@ public class WebHookConfigWithFilterTest extends WebHookTestServerTestBase {
 	WebHookTestServer s;
 	
 	protected SortedMap<String, String> map = new TreeMap<>();
-	protected ExtraParametersMap  extraParameters  = new ExtraParametersMap(map); 
-	protected ExtraParametersMap  teamcityProperties  = new ExtraParametersMap(map); 
+	protected ExtraParameters  extraParameters  = new ExtraParameters(map); 
+	protected ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
 	protected WebHookMockingFramework framework;
 	
 	@Before

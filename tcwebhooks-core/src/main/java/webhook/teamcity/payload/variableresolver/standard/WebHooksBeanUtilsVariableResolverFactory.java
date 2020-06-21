@@ -5,7 +5,7 @@ import java.util.Map;
 import jetbrains.buildServer.log.Loggers;
 import webhook.teamcity.payload.PayloadTemplateEngineType;
 import webhook.teamcity.payload.WebHookContentObjectSerialiser;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.variableresolver.VariableMessageBuilder;
 import webhook.teamcity.payload.variableresolver.VariableResolverFactory;
 import webhook.teamcity.payload.variableresolver.WebHookVariableResolverManager;
@@ -38,7 +38,7 @@ public class WebHooksBeanUtilsVariableResolverFactory implements VariableResolve
 
 	@Override
 	public VariableResolver buildVariableResolver(WebHookContentObjectSerialiser webhookPayload, Object javaBean,
-			Map<String, ExtraParametersMap> extraAndTeamCityProperties) {
+			Map<String, ExtraParameters> extraAndTeamCityProperties) {
 		return new WebHooksBeanUtilsVariableResolver(webhookPayload, javaBean, extraAndTeamCityProperties);
 	}
 

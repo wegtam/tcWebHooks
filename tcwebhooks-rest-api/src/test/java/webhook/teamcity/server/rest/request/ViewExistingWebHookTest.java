@@ -24,7 +24,7 @@ import com.sun.jersey.api.client.filter.LoggingFilter;
 
 import jetbrains.buildServer.serverSide.settings.ProjectSettingsManager;
 import webhook.teamcity.BuildStateEnum;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.server.rest.model.template.Templates;
 import webhook.teamcity.server.rest.model.webhook.ProjectWebhooks;
 import webhook.testframework.WebHookMockingFramework;
@@ -61,8 +61,8 @@ public class ViewExistingWebHookTest extends WebHookAbstractSpringAwareJerseyTes
     public void testJsonWebHooksRequestUsingRegisteredWebHook() throws JAXBException, IOException, JDOMException {
     	
     	SortedMap<String, String> map = new TreeMap<>();
-    	ExtraParametersMap  extraParameters  = new ExtraParametersMap(map); 
-    	ExtraParametersMap  teamcityProperties  = new ExtraParametersMap(map); 
+    	ExtraParameters  extraParameters  = new ExtraParameters(map); 
+    	ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
     	
     	WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
 		framework.loadWebHookProjectSettingsFromConfigXml(new File("../tcwebhooks-core/src/test/resources/project-settings-test-all-states-enabled-with-branch-and-auth.xml"));
@@ -80,8 +80,8 @@ public class ViewExistingWebHookTest extends WebHookAbstractSpringAwareJerseyTes
     public void testShortJsonWebHooksRequestUsingRegisteredWebHook() throws JAXBException, IOException, JDOMException {
     	
     	SortedMap<String, String> map = new TreeMap<>();
-    	ExtraParametersMap  extraParameters  = new ExtraParametersMap(map); 
-    	ExtraParametersMap  teamcityProperties  = new ExtraParametersMap(map); 
+    	ExtraParameters  extraParameters  = new ExtraParameters(map); 
+    	ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
     	
     	WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
     	framework.loadWebHookProjectSettingsFromConfigXml(new File("../tcwebhooks-core/src/test/resources/project-settings-test-all-states-enabled-with-branch-and-auth.xml"));

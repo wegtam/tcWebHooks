@@ -15,15 +15,15 @@ import org.junit.Test;
 import webhook.teamcity.BuildState;
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.auth.WebHookAuthConfig;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.testframework.WebHookMockingFramework;
 import webhook.testframework.WebHookMockingFrameworkImpl;
 
 public class WebHookProjectSettingsTest {
 	
 	protected SortedMap<String, String> map = new TreeMap<>();
-	protected ExtraParametersMap  extraParameters  = new ExtraParametersMap(map); 
-	protected ExtraParametersMap  teamcityProperties  = new ExtraParametersMap(map); 
+	protected ExtraParameters  extraParameters  = new ExtraParameters(map); 
+	protected ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
 	protected WebHookMockingFramework framework;
 	
 	@Test

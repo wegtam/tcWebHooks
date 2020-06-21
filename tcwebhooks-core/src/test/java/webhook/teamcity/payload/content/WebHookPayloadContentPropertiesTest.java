@@ -18,8 +18,8 @@ import webhook.testframework.WebHookMockingFrameworkImpl;
 public class WebHookPayloadContentPropertiesTest {
 	
 	SortedMap<String, String> map = new TreeMap<String, String>();
-	ExtraParametersMap  extraParameters  = new ExtraParametersMap(map); 
-	ExtraParametersMap  teamcityProperties  = new ExtraParametersMap(map); 
+	ExtraParameters  extraParameters  = new ExtraParameters(map); 
+	ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
 	SortedMap<String, String>  templates  = new TreeMap<String, String>(); 
 	WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
 

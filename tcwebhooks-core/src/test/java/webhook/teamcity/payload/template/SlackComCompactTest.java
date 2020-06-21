@@ -14,15 +14,15 @@ import org.junit.Test;
 
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.payload.WebHookPayloadTemplate;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.settings.entity.WebHookTemplates;
 import webhook.testframework.WebHookSemiMockingFrameworkImpl;
 
 public class SlackComCompactTest {
 	
 	protected SortedMap<String, String> map = new TreeMap<>();
-	protected ExtraParametersMap  extraParameters  = new ExtraParametersMap(map); 
-	protected ExtraParametersMap  teamcityProperties  = new ExtraParametersMap(map); 
+	protected ExtraParameters  extraParameters  = new ExtraParameters(map); 
+	protected ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
 	protected WebHookSemiMockingFrameworkImpl framework;
 	
 	@Test

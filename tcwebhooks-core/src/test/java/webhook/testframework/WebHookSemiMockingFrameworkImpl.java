@@ -46,7 +46,7 @@ import webhook.teamcity.payload.WebHookPayload;
 import webhook.teamcity.payload.WebHookPayloadManager;
 import webhook.teamcity.payload.WebHookTemplateManager;
 import webhook.teamcity.payload.WebHookTemplateResolver;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.content.WebHookPayloadContent;
 import webhook.teamcity.payload.format.WebHookPayloadJsonTemplate;
 import webhook.teamcity.payload.format.WebHookPayloadNameValuePairs;
@@ -115,7 +115,7 @@ public class WebHookSemiMockingFrameworkImpl implements WebHookMockingFramework 
 	private ProjectIdResolver projectIdResolver = mock(ProjectIdResolver.class);
 
 	
-	public static WebHookSemiMockingFrameworkImpl create(BuildStateEnum buildState, ExtraParametersMap extraParameters, ExtraParametersMap teamcityProperties) {
+	public static WebHookSemiMockingFrameworkImpl create(BuildStateEnum buildState, ExtraParameters extraParameters, ExtraParameters teamcityProperties) {
 		WebHookSemiMockingFrameworkImpl framework = new WebHookSemiMockingFrameworkImpl();
 		framework.setup();
 		framework.buildstateEnum = buildState;

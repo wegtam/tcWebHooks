@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import webhook.teamcity.Loggers;
 import webhook.teamcity.payload.WebHookContentObjectSerialiser;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.util.StringSanitiser;
 import webhook.teamcity.payload.util.StringUtils;
 import webhook.teamcity.payload.variableresolver.VariableResolver;
@@ -40,10 +40,10 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 	private static final String SUBSTR = "substr(";
 	private static final String SUFFIX = ")";
 	private final Object bean;
-	private final Map<String, ExtraParametersMap> extraAndTeamCityProperties;
+	private final Map<String, ExtraParameters> extraAndTeamCityProperties;
 	private final WebHookContentObjectSerialiser webhookPayload;
 
-	public WebHooksBeanUtilsVariableResolver(WebHookContentObjectSerialiser webhookPayload, Object javaBean, Map<String, ExtraParametersMap> extraAndTeamCityProperties) {
+	public WebHooksBeanUtilsVariableResolver(WebHookContentObjectSerialiser webhookPayload, Object javaBean, Map<String, ExtraParameters> extraAndTeamCityProperties) {
 		this.webhookPayload = webhookPayload;
 		this.bean = javaBean;
 		this.extraAndTeamCityProperties = extraAndTeamCityProperties;
@@ -67,7 +67,7 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 		if (variableName.startsWith(ESCAPEJSON) && variableName.endsWith(SUFFIX)){
 			try {
 				String dirtyString = variableName.substring(ESCAPEJSON.length(), variableName.length() - SUFFIX.length());
-				for (Entry<String, ExtraParametersMap> entry : this.extraAndTeamCityProperties.entrySet()){
+				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
 					if (entry.getValue().containsKey(dirtyString)){
 						return StringEscapeUtils.escapeJson(entry.getValue().get(dirtyString));
 					}
@@ -83,7 +83,7 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 		if ((variableName.startsWith(CAPITALISE)|| variableName.startsWith(CAPITALIZE)) && variableName.endsWith(SUFFIX)){
 			try {
 				String dirtyString = variableName.substring(CAPITALISE.length(), variableName.length() - SUFFIX.length());
-				for (Entry<String, ExtraParametersMap> entry : this.extraAndTeamCityProperties.entrySet()){
+				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
 					if (entry.getValue().containsKey(dirtyString)){
 						return StringUtils.capitaliseAllWords(entry.getValue().get(dirtyString));
 					}
@@ -100,7 +100,7 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 			try {
 				String[] subStringOptions = variableName.substring(SUBSTR.length(), variableName.length() - SUFFIX.length()).split(",");
 				String varName = subStringOptions[0];
-				for (Entry<String, ExtraParametersMap> entry : this.extraAndTeamCityProperties.entrySet()){
+				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
 					if (entry.getValue().containsKey(varName)){
 						return StringUtils.subString(
 									entry.getValue().get(varName),
@@ -126,7 +126,7 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 		if ((variableName.startsWith("capitaliseFirst(")|| variableName.startsWith("capitalizeFirst(")) && variableName.endsWith(SUFFIX)){
 			try {
 				String dirtyString = variableName.substring(CAPITALISE.length(), variableName.length() - SUFFIX.length());
-				for (Entry<String, ExtraParametersMap> entry : this.extraAndTeamCityProperties.entrySet()){
+				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
 					if (entry.getValue().containsKey(dirtyString)){
 						return StringUtils.capitaliseFirstWord(entry.getValue().get(dirtyString));
 					}
@@ -142,7 +142,7 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 		if ((variableName.startsWith(SANITISE) || variableName.startsWith(SANITIZE)) && variableName.endsWith(SUFFIX)){
 			try {
 				String dirtyString = variableName.substring(SANITISE.length(), variableName.length() - SUFFIX.length());
-				for (Entry<String, ExtraParametersMap> entry : this.extraAndTeamCityProperties.entrySet()){
+				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
 					if (entry.getValue().containsKey(dirtyString)){
 						return StringSanitiser.sanitise(entry.getValue().get(dirtyString));
 					}
@@ -157,7 +157,7 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 
 		try {
 			// Try getting it from properties passed in first.
-			for (Entry<String, ExtraParametersMap> entry : this.extraAndTeamCityProperties.entrySet()){
+			for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
 				if (entry.getValue().containsKey(variableName)){
 					value = entry.getValue().get(variableName);
 				}

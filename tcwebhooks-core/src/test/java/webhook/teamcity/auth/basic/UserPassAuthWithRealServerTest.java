@@ -18,15 +18,15 @@ import org.mockito.MockitoAnnotations;
 import webhook.WebHookTestServer;
 import webhook.WebHookTestServerTestBase;
 import webhook.teamcity.BuildStateEnum;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.testframework.WebHookMockingFramework;
 import webhook.testframework.WebHookMockingFrameworkImpl;
 
 public class UserPassAuthWithRealServerTest extends WebHookTestServerTestBase {
 
 	protected SortedMap<String, String> map = new TreeMap<>();
-	protected ExtraParametersMap  extraParameters  = new ExtraParametersMap(map); 
-	protected ExtraParametersMap  teamcityProperties  = new ExtraParametersMap(map); 
+	protected ExtraParameters  extraParameters  = new ExtraParameters(map); 
+	protected ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
 	protected WebHookMockingFramework framework;
 	
 	WebHookTestServer server;

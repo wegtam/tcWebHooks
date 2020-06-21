@@ -8,7 +8,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 
 import webhook.teamcity.Loggers;
-import webhook.teamcity.payload.content.ExtraParametersMap;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.variableresolver.VariableResolver;
 
 /**
@@ -25,10 +25,10 @@ public class WebHooksBeanUtilsVelocityVariableResolver implements VariableResolv
 	
 	
 	Object bean;
-	Map<String, ExtraParametersMap> extraAndTeamCityProperties;
+	Map<String, ExtraParameters> extraAndTeamCityProperties;
 	VelocityContext velocityContext = new VelocityContext();
 	
-	public WebHooksBeanUtilsVelocityVariableResolver(Object javaBean, Map<String, ExtraParametersMap> extraAndTeamCityProperties) {
+	public WebHooksBeanUtilsVelocityVariableResolver(Object javaBean, Map<String, ExtraParameters> extraAndTeamCityProperties) {
 		this.bean = javaBean;
 		this.extraAndTeamCityProperties = extraAndTeamCityProperties;
 		
