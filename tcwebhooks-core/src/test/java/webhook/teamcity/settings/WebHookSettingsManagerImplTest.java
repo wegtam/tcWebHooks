@@ -54,7 +54,6 @@ public class WebHookSettingsManagerImplTest {
 		
 		WebHookMockingFramework framework = WebHookSemiMockingFrameworkImpl.create(
 														BuildStateEnum.BUILD_STARTED,
-														new ExtraParameters(new HashMap<String, String>()),
 														new ExtraParameters(new HashMap<String, String>())
 												);
 		

@@ -22,13 +22,12 @@ public class SlackComCompactTest {
 	
 	protected SortedMap<String, String> map = new TreeMap<>();
 	protected ExtraParameters  extraParameters  = new ExtraParameters(map); 
-	protected ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
 	protected WebHookSemiMockingFrameworkImpl framework;
 	
 	@Test
 	public void testBuildStarted() throws IOException, JDOMException, InterruptedException, JAXBException {
 		
-		framework = WebHookSemiMockingFrameworkImpl.create(BuildStateEnum.BUILD_STARTED, extraParameters, teamcityProperties);
+		framework = WebHookSemiMockingFrameworkImpl.create(BuildStateEnum.BUILD_STARTED, extraParameters);
 		
 		WebHookPayloadTemplate slackCompact = new SlackComCompactXmlWebHookTemplate(
 														framework.getWebHookTemplateManager(), 
@@ -51,7 +50,7 @@ public class SlackComCompactTest {
 	@Test
 	public void testBuildSuccessful() throws IOException, JDOMException, InterruptedException {
 		
-		framework = WebHookSemiMockingFrameworkImpl.create(BuildStateEnum.BUILD_SUCCESSFUL, extraParameters, teamcityProperties);
+		framework = WebHookSemiMockingFrameworkImpl.create(BuildStateEnum.BUILD_SUCCESSFUL, extraParameters);
 		
 		WebHookPayloadTemplate slackCompact = new SlackComCompactXmlWebHookTemplate(
 				framework.getWebHookTemplateManager(), 

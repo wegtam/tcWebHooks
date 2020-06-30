@@ -62,9 +62,8 @@ public class ViewExistingWebHookTest extends WebHookAbstractSpringAwareJerseyTes
     	
     	SortedMap<String, String> map = new TreeMap<>();
     	ExtraParameters  extraParameters  = new ExtraParameters(map); 
-    	ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
     	
-    	WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
+    	WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters);
 		framework.loadWebHookProjectSettingsFromConfigXml(new File("../tcwebhooks-core/src/test/resources/project-settings-test-all-states-enabled-with-branch-and-auth.xml"));
 		
 		Element webhooksParent = new Element("webhooks");
@@ -81,9 +80,8 @@ public class ViewExistingWebHookTest extends WebHookAbstractSpringAwareJerseyTes
     	
     	SortedMap<String, String> map = new TreeMap<>();
     	ExtraParameters  extraParameters  = new ExtraParameters(map); 
-    	ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
     	
-    	WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
+    	WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters);
     	framework.loadWebHookProjectSettingsFromConfigXml(new File("../tcwebhooks-core/src/test/resources/project-settings-test-all-states-enabled-with-branch-and-auth.xml"));
     	
     	Element webhooksParent = new Element("webhooks");

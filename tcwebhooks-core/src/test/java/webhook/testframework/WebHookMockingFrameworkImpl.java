@@ -132,8 +132,7 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 	SBuildType build3 = mock(SBuildType.class);
 	
 	WebHookListener whl;
-	SortedMap<String, String> extraParameters;
-	SortedMap<String, String> teamcityProperties;
+	ExtraParameters extraParameters;
 	BuildStateEnum buildstateEnum;
 	List<WebHookPayloadTemplate> templateList = new ArrayList<>();
 	List<WebHookPayload> formatList = new ArrayList<>();
@@ -328,12 +327,11 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 		};
 	}
 
-	public static WebHookMockingFramework create(BuildStateEnum buildState, ExtraParameters extraParameters, ExtraParameters teamcityProperties) {
+	public static WebHookMockingFramework create(BuildStateEnum buildState, ExtraParameters extraParameters) {
 		WebHookMockingFrameworkImpl framework = new WebHookMockingFrameworkImpl();
 		framework.buildstateEnum = buildState;
-		framework.extraParameters = extraParameters;
-		framework.teamcityProperties = teamcityProperties;
-		framework.content = new WebHookPayloadContent(framework.variableResolverFactory, framework.sBuildServer, framework.sRunningBuild, framework.previousSuccessfulBuild, buildState, extraParameters, teamcityProperties, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
+		framework.extraParameters = WebHookContentBuilder.mergeParameters(extraParameters.getWebHookParameters().asMap(), framework.sRunningBuild, "");
+		framework.content = new WebHookPayloadContent(framework.variableResolverFactory, framework.sBuildServer, framework.sRunningBuild, framework.previousSuccessfulBuild, buildState, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		return framework;
 	}
 
@@ -355,13 +353,13 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 	@Override
 	public void loadWebHookConfigXml(File xmlConfigFile) throws JDOMException, IOException {
 		webHookConfig = ConfigLoaderUtil.getFirstWebHookInConfig(xmlConfigFile);
-		this.content = new WebHookPayloadContent(this.variableResolverFactory, this.sBuildServer, this.sRunningBuild, this.previousSuccessfulBuild, this.buildstateEnum, extraParameters, teamcityProperties, webHookConfig.getEnabledTemplates());
+		this.content = new WebHookPayloadContent(this.variableResolverFactory, this.sBuildServer, this.sRunningBuild, this.previousSuccessfulBuild, this.buildstateEnum, extraParameters, webHookConfig.getEnabledTemplates());
 	}
 	
 	@Override
 	public void loadNthWebHookConfigXml(int itemNumber, File xmlConfigFile) throws JDOMException, IOException {
 		webHookConfig = ConfigLoaderUtil.getSpecificWebHookInConfig(itemNumber, xmlConfigFile);
-		this.content = new WebHookPayloadContent(this.variableResolverFactory, this.sBuildServer, this.sRunningBuild, this.previousSuccessfulBuild, this.buildstateEnum, extraParameters, teamcityProperties, webHookConfig.getEnabledTemplates());
+		this.content = new WebHookPayloadContent(this.variableResolverFactory, this.sBuildServer, this.sRunningBuild, this.previousSuccessfulBuild, this.buildstateEnum, extraParameters, webHookConfig.getEnabledTemplates());
 	}
 	
 	@Override

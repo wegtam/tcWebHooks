@@ -40,13 +40,13 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 	private static final String SUBSTR = "substr(";
 	private static final String SUFFIX = ")";
 	private final Object bean;
-	private final Map<String, ExtraParameters> extraAndTeamCityProperties;
+	private final ExtraParameters extraParameters;
 	private final WebHookContentObjectSerialiser webhookPayload;
 
-	public WebHooksBeanUtilsVariableResolver(WebHookContentObjectSerialiser webhookPayload, Object javaBean, Map<String, ExtraParameters> extraAndTeamCityProperties) {
+	public WebHooksBeanUtilsVariableResolver(WebHookContentObjectSerialiser webhookPayload, Object javaBean, ExtraParameters extraAndTeamCityProperties) {
 		this.webhookPayload = webhookPayload;
 		this.bean = javaBean;
-		this.extraAndTeamCityProperties = extraAndTeamCityProperties;
+		this.extraParameters = extraAndTeamCityProperties;
 	}
 
 	@Override
@@ -67,10 +67,8 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 		if (variableName.startsWith(ESCAPEJSON) && variableName.endsWith(SUFFIX)){
 			try {
 				String dirtyString = variableName.substring(ESCAPEJSON.length(), variableName.length() - SUFFIX.length());
-				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
-					if (entry.getValue().containsKey(dirtyString)){
-						return StringEscapeUtils.escapeJson(entry.getValue().get(dirtyString));
-					}
+				if (extraParameters.containsKey(dirtyString)){
+					return StringEscapeUtils.escapeJson(extraParameters.get(dirtyString));
 				}
 				return StringEscapeUtils.escapeJson((String) getProperty(bean, dirtyString).toString());
 			} catch (NullPointerException | IllegalArgumentException |
@@ -83,10 +81,8 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 		if ((variableName.startsWith(CAPITALISE)|| variableName.startsWith(CAPITALIZE)) && variableName.endsWith(SUFFIX)){
 			try {
 				String dirtyString = variableName.substring(CAPITALISE.length(), variableName.length() - SUFFIX.length());
-				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
-					if (entry.getValue().containsKey(dirtyString)){
-						return StringUtils.capitaliseAllWords(entry.getValue().get(dirtyString));
-					}
+				if (extraParameters.containsKey(dirtyString)){
+					return StringUtils.capitaliseAllWords(extraParameters.get(dirtyString));
 				}
 				return StringUtils.capitaliseAllWords((String) getProperty(bean, dirtyString));
 			} catch (NullPointerException | IllegalArgumentException |
@@ -100,15 +96,13 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 			try {
 				String[] subStringOptions = variableName.substring(SUBSTR.length(), variableName.length() - SUFFIX.length()).split(",");
 				String varName = subStringOptions[0];
-				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
-					if (entry.getValue().containsKey(varName)){
-						return StringUtils.subString(
-									entry.getValue().get(varName),
-									Integer.valueOf(subStringOptions[1]),
-									Integer.valueOf(subStringOptions[2]),
-									Integer.valueOf(subStringOptions[3])
-								);
-					}
+				if (extraParameters.containsKey(varName)){
+					return StringUtils.subString(
+							this.extraParameters.get(varName),
+								Integer.valueOf(subStringOptions[1]),
+								Integer.valueOf(subStringOptions[2]),
+								Integer.valueOf(subStringOptions[3])
+							);
 				}
 				return StringUtils.subString(
 								getProperty(bean, varName),
@@ -126,10 +120,8 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 		if ((variableName.startsWith("capitaliseFirst(")|| variableName.startsWith("capitalizeFirst(")) && variableName.endsWith(SUFFIX)){
 			try {
 				String dirtyString = variableName.substring(CAPITALISE.length(), variableName.length() - SUFFIX.length());
-				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
-					if (entry.getValue().containsKey(dirtyString)){
-						return StringUtils.capitaliseFirstWord(entry.getValue().get(dirtyString));
-					}
+				if (extraParameters.containsKey(dirtyString)){
+					return StringUtils.capitaliseFirstWord(extraParameters.get(dirtyString));
 				}
 				return StringUtils.capitaliseFirstWord((String) PropertyUtils.getProperty(bean, dirtyString).toString());
 			} catch (NullPointerException | IllegalArgumentException |
@@ -142,10 +134,8 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 		if ((variableName.startsWith(SANITISE) || variableName.startsWith(SANITIZE)) && variableName.endsWith(SUFFIX)){
 			try {
 				String dirtyString = variableName.substring(SANITISE.length(), variableName.length() - SUFFIX.length());
-				for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
-					if (entry.getValue().containsKey(dirtyString)){
-						return StringSanitiser.sanitise(entry.getValue().get(dirtyString));
-					}
+				if (extraParameters.containsKey(dirtyString)){
+					return StringSanitiser.sanitise(extraParameters.get(dirtyString));
 				}
 				return StringSanitiser.sanitise((String) getProperty(bean, dirtyString));
 
@@ -157,10 +147,8 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 
 		try {
 			// Try getting it from properties passed in first.
-			for (Entry<String, ExtraParameters> entry : this.extraAndTeamCityProperties.entrySet()){
-				if (entry.getValue().containsKey(variableName)){
-					value = entry.getValue().get(variableName);
-				}
+			if (extraParameters.containsKey(variableName)){
+				value = extraParameters.get(variableName);
 			}
 
 			// Or override it from the PayloadContent if it exists.

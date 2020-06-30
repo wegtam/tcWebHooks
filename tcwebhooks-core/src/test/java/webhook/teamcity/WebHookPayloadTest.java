@@ -23,6 +23,7 @@ import webhook.WebHookTestServer;
 import webhook.teamcity.payload.WebHookPayload;
 import webhook.teamcity.payload.WebHookPayloadDefaultTemplates;
 import webhook.teamcity.payload.WebHookPayloadManager;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.content.WebHookPayloadContentAssemblyException;
 import webhook.teamcity.payload.format.WebHookPayloadNameValuePairs;
 import webhook.teamcity.payload.variableresolver.VariableResolverFactory;
@@ -58,7 +59,7 @@ public class WebHookPayloadTest {
 		WebHookPayloadManager wpm = new WebHookPayloadManager(mockServer);
 		WebHookPayloadNameValuePairs whp = new WebHookPayloadNameValuePairs(wpm, resolverManager);
 		whp.register();
-		SortedMap<String, String> extraParameters = new TreeMap<>();
+		ExtraParameters extraParameters = new ExtraParameters();
 		extraParameters.put("something", "somewhere");
 		//String content = wpm.getFormat("nvpairs").buildStarted(sRunningBuild, extraParameters);
 		System.out.println(sRunningBuild.getBuildDescription());

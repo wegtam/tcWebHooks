@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 public class WebHookParameterModel implements WebHookParameter {
 	
 	private String id;
+	private String context;
 	private String name;
 	private String value;
 	private Boolean secure;

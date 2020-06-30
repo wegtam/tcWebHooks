@@ -23,13 +23,12 @@ public class WebHookProjectSettingsTest {
 	
 	protected SortedMap<String, String> map = new TreeMap<>();
 	protected ExtraParameters  extraParameters  = new ExtraParameters(map); 
-	protected ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
 	protected WebHookMockingFramework framework;
 	
 	@Test
 	public void TestUpdateToWebhookConfigToRemoveAuthenicationUpdatesCorrectlyWhenNullWebHookAuthConfigPassedIn() throws IOException, JDOMException{
 		
-		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
+		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters);
 		framework.loadWebHookProjectSettingsFromConfigXml(new File("src/test/resources/project-settings-test-all-states-enabled-with-branch-and-auth.xml"));
 		
 		WebHookProjectSettings settings = framework.getWebHookProjectSettings(); 
@@ -45,7 +44,7 @@ public class WebHookProjectSettingsTest {
 	@Test
 	public void TestUpdateToWebhookConfigToAddAuthenicationUpdatesCorrectlyWhenValidWebHookAuthConfigPassedIn() throws IOException, JDOMException{
 		
-		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
+		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters);
 		framework.loadWebHookProjectSettingsFromConfigXml(new File("src/test/resources/project-settings-test-all-states-enabled-with-branchNameFilter.xml"));
 		
 		WebHookProjectSettings settings = framework.getWebHookProjectSettings(); 

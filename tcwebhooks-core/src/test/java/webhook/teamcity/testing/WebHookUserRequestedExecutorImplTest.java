@@ -153,7 +153,7 @@ public class WebHookUserRequestedExecutorImplTest extends WebHookTestServerTestB
 		usernamePasswordAuthenticatorFactory.register();
 		
 		
-		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, new ExtraParameters(new HashMap<String,String>()), new ExtraParameters(new HashMap<String,String>()));
+		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, new ExtraParameters(new HashMap<String,String>()));
 		framework.loadWebHookProjectSettingsFromConfigXml(new File("src/test/resources/project-settings-test-slackcompact-jsonTemplate-AllEnabled.xml"));
 		webHookProjectSettings = framework.getWebHookProjectSettings(); 
 

@@ -38,7 +38,7 @@ public class WebHooksBeanUtilsVariableResolverFactory implements VariableResolve
 
 	@Override
 	public VariableResolver buildVariableResolver(WebHookContentObjectSerialiser webhookPayload, Object javaBean,
-			Map<String, ExtraParameters> extraAndTeamCityProperties) {
+			ExtraParameters extraAndTeamCityProperties) {
 		return new WebHooksBeanUtilsVariableResolver(webhookPayload, javaBean, extraAndTeamCityProperties);
 	}
 

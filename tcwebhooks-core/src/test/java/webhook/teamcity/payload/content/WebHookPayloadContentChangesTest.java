@@ -10,9 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -74,8 +72,7 @@ public class WebHookPayloadContentChangesTest {
 				variableResolverFactory, sBuildServer, 
 				sRunningBuild, previousBuild, 
 				BuildStateEnum.BEFORE_BUILD_FINISHED, 
-				new ExtraParameters(new HashMap<String, String>()), 
-				new ExtraParameters(new HashMap<String, String>()), 
+				new ExtraParameters(), 
 				WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		
 		assertEquals(100, content.getMaxChangeFileListSize());
@@ -97,8 +94,7 @@ public class WebHookPayloadContentChangesTest {
 				variableResolverFactory, sBuildServer, 
 				sRunningBuild, previousBuild, 
 				BuildStateEnum.BEFORE_BUILD_FINISHED, 
-				new ExtraParameters(new HashMap<String, String>()), 
-				new ExtraParameters(new HashMap<String, String>()), 
+				new ExtraParameters(), 
 				WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		
 		assertEquals(100, content.getMaxChangeFileListSize());
@@ -120,8 +116,7 @@ public class WebHookPayloadContentChangesTest {
 				variableResolverFactory, sBuildServer, 
 				sRunningBuild, previousBuild, 
 				BuildStateEnum.BEFORE_BUILD_FINISHED, 
-				new ExtraParameters(new HashMap<String, String>()), 
-				new ExtraParameters(new HashMap<String, String>()), 
+				new ExtraParameters(),
 				WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		
 		assertEquals(100, content.getMaxChangeFileListSize());
@@ -144,8 +139,7 @@ public class WebHookPayloadContentChangesTest {
 				variableResolverFactory, sBuildServer, 
 				sRunningBuild, previousBuild, 
 				BuildStateEnum.BEFORE_BUILD_FINISHED, 
-				new ExtraParameters(new HashMap<String, String>()), 
-				new ExtraParameters(new HashMap<String, String>()), 
+				new ExtraParameters(),
 				WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		
 		assertEquals(100, content.getMaxChangeFileListSize());
@@ -161,8 +155,8 @@ public class WebHookPayloadContentChangesTest {
 	public void testChangedFilesIsNullWith50FilesButLimitIs10SetViaTeamCityBuildParameter() {
 		
 		SBuild sRunningBuild = getMockedBuild();
-		Map<String,String> teamCityMap = new HashMap<>();
-		teamCityMap.put("webhook.maxChangeFileListSize", "10");
+		ExtraParameters teamCityMap = new ExtraParameters();
+		teamCityMap.put(ExtraParameters.TEAMCITY, "webhook.maxChangeFileListSize", "10");
 		List<SVcsModification> mod = getMockedChanges(50);
 		when(sRunningBuild.getContainingChanges()).thenReturn(mod);
 		
@@ -170,8 +164,7 @@ public class WebHookPayloadContentChangesTest {
 				variableResolverFactory, sBuildServer, 
 				sRunningBuild, previousBuild, 
 				BuildStateEnum.BEFORE_BUILD_FINISHED, 
-				new ExtraParameters(new HashMap<String, String>()), 
-				new ExtraParameters(teamCityMap), 
+				teamCityMap, 
 				WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		
 		assertEquals(10, content.getMaxChangeFileListSize());
@@ -187,7 +180,7 @@ public class WebHookPayloadContentChangesTest {
 	public void testChangedFilesIsNullWith50FilesButLimitIs20SetViaWebHookProperty() {
 		
 		SBuild sRunningBuild = getMockedBuild();
-		Map<String,String> propertiesMap = new HashMap<>();
+		ExtraParameters propertiesMap = new ExtraParameters();
 		propertiesMap.put("maxChangeFileListSize", "20");
 		List<SVcsModification> mod = getMockedChanges(50);
 		when(sRunningBuild.getContainingChanges()).thenReturn(mod);
@@ -196,8 +189,7 @@ public class WebHookPayloadContentChangesTest {
 				variableResolverFactory, sBuildServer, 
 				sRunningBuild, previousBuild, 
 				BuildStateEnum.BEFORE_BUILD_FINISHED, 
-				new ExtraParameters(propertiesMap), 
-				new ExtraParameters(new HashMap<String, String>()), 
+				propertiesMap, 
 				WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		
 		assertEquals(20, content.getMaxChangeFileListSize());
@@ -213,7 +205,7 @@ public class WebHookPayloadContentChangesTest {
 	public void testChangedFilesContainsAllWhenUnlimitedViaWebHookProperty() {
 		
 		SBuild sRunningBuild = getMockedBuild();
-		Map<String,String> propertiesMap = new HashMap<>();
+		ExtraParameters propertiesMap = new ExtraParameters();
 		propertiesMap.put("maxChangeFileListSize", "-1");
 		List<SVcsModification> mod = getMockedChanges(500);
 		when(sRunningBuild.getContainingChanges()).thenReturn(mod);
@@ -222,8 +214,7 @@ public class WebHookPayloadContentChangesTest {
 				variableResolverFactory, sBuildServer, 
 				sRunningBuild, previousBuild, 
 				BuildStateEnum.BEFORE_BUILD_FINISHED, 
-				new ExtraParameters(propertiesMap), 
-				new ExtraParameters(new HashMap<String, String>()), 
+				propertiesMap, 
 				WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		
 		assertEquals(-1, content.getMaxChangeFileListSize());
@@ -237,7 +228,7 @@ public class WebHookPayloadContentChangesTest {
 	public void testChangedFilesContainsAllFromMulitpleChangesWhenUnlimitedViaWebHookProperty() {
 		
 		SBuild sRunningBuild = getMockedBuild();
-		Map<String,String> propertiesMap = new HashMap<>();
+		ExtraParameters propertiesMap = new ExtraParameters();
 		propertiesMap.put("maxChangeFileListSize", "-1");
 		List<SVcsModification> mod = getMockedChanges(5, 500);
 		when(sRunningBuild.getContainingChanges()).thenReturn(mod);
@@ -246,8 +237,7 @@ public class WebHookPayloadContentChangesTest {
 				variableResolverFactory, sBuildServer, 
 				sRunningBuild, previousBuild, 
 				BuildStateEnum.BEFORE_BUILD_FINISHED, 
-				new ExtraParameters(propertiesMap), 
-				new ExtraParameters(new HashMap<String, String>()), 
+				propertiesMap, 
 				WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		
 		assertEquals(-1, content.getMaxChangeFileListSize());
@@ -270,8 +260,8 @@ public class WebHookPayloadContentChangesTest {
 	public void testChangedFilesIsNullWhenDisabledViaTeamCityBuildParameter() {
 		
 		SBuild sRunningBuild = getMockedBuild();
-		Map<String,String> teamcityBuildParameters = new HashMap<>();
-		teamcityBuildParameters.put("webhook.maxChangeFileListSize", "0");
+		ExtraParameters teamcityBuildParameters = new ExtraParameters();
+		teamcityBuildParameters.put("teamcity", "webhook.maxChangeFileListSize", "0");
 		List<SVcsModification> mod = getMockedChanges(50);
 		when(sRunningBuild.getContainingChanges()).thenReturn(mod);
 		
@@ -279,8 +269,7 @@ public class WebHookPayloadContentChangesTest {
 				variableResolverFactory, sBuildServer, 
 				sRunningBuild, previousBuild, 
 				BuildStateEnum.BEFORE_BUILD_FINISHED, 
-				new ExtraParameters(new HashMap<String, String>()), 
-				new ExtraParameters(teamcityBuildParameters), 
+				teamcityBuildParameters, 
 				WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		
 		assertEquals(0, content.getMaxChangeFileListSize());

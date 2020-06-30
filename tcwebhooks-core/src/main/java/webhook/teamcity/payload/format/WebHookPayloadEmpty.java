@@ -13,6 +13,7 @@ import webhook.teamcity.payload.WebHookContentObjectSerialiser;
 import webhook.teamcity.payload.WebHookPayload;
 import webhook.teamcity.payload.WebHookPayloadManager;
 import webhook.teamcity.payload.WebHookTemplateContent;
+import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.template.render.WebHookStringRenderer;
 
 public class WebHookPayloadEmpty implements WebHookPayload, WebHookContentObjectSerialiser {
@@ -29,25 +30,25 @@ public class WebHookPayloadEmpty implements WebHookPayload, WebHookContentObject
 	}
 
 	@Override
-	public String buildAddedToQueue(SQueuedBuild sQueuedBuild, SortedMap<String, String> extraParameters,
+	public String buildAddedToQueue(SQueuedBuild sQueuedBuild, ExtraParameters extraParameters,
 			Map<String, String> templates, WebHookTemplateContent webHookTemplate) {
 		return "";
 	}
 
 	@Override
-	public String buildRemovedFromQueue(SQueuedBuild sQueuedBuild, SortedMap<String, String> extraParameters,
+	public String buildRemovedFromQueue(SQueuedBuild sQueuedBuild, ExtraParameters extraParameters,
 			Map<String, String> templates, WebHookTemplateContent webHookTemplate, String user, String comment) {
 		return "";
 	}
 
 	@Override
-	public String buildPinned(SBuild sBuild, SortedMap<String, String> extraParameters, Map<String, String> templates,
+	public String buildPinned(SBuild sBuild, ExtraParameters extraParameters, Map<String, String> templates,
 			WebHookTemplateContent webHookTemplate, String username, String comment) {
 		return "";
 	}
 
 	@Override
-	public String buildUnpinned(SBuild sBuild, SortedMap<String, String> extraParameters, Map<String, String> templates,
+	public String buildUnpinned(SBuild sBuild, ExtraParameters extraParameters, Map<String, String> templates,
 			WebHookTemplateContent webHookTemplate, String username, String comment) {
 		return "";
 	}
@@ -55,7 +56,7 @@ public class WebHookPayloadEmpty implements WebHookPayload, WebHookContentObject
 	@Override
 	public String beforeBuildFinish(SBuild runningBuild,
 			SFinishedBuild previousBuild,
-			SortedMap<String,String> extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
+			ExtraParameters extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
 		return "";
 	}
 
@@ -63,35 +64,35 @@ public class WebHookPayloadEmpty implements WebHookPayload, WebHookContentObject
 	public String buildChangedStatus(SBuild runningBuild,
 			SFinishedBuild previousBuild,
 			Status oldStatus, Status newStatus,
-			SortedMap<String,String> extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
+			ExtraParameters extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
 		return "";
 	}
 
 	@Override
 	public String buildFinished(SBuild runningBuild,
 			SFinishedBuild previousBuild,
-			SortedMap<String,String> extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
+			ExtraParameters extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
 		return "";
 	}
 
 	@Override
 	public String buildInterrupted(SBuild runningBuild,
 			SFinishedBuild previousBuild,
-			SortedMap<String,String> extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
+			ExtraParameters extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
 		return "";
 	}
 
 	@Override
 	public String changesLoaded(SBuild runningBuild,
 			SFinishedBuild previousBuild,
-			SortedMap<String,String> extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
+			ExtraParameters extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
 		return "";
 	}
 
 	@Override
 	public String buildStarted(SBuild runningBuild,
 			SFinishedBuild previousBuild,
-			SortedMap<String,String> extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
+			ExtraParameters extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate) {
 		return "";
 	}
 
@@ -127,7 +128,7 @@ public class WebHookPayloadEmpty implements WebHookPayload, WebHookContentObject
 
 	@Override
 	public String responsibilityChanged(WebHookResponsibilityHolder responsibilityHolder,
-			SortedMap<String, String> mergeParameters, Map<String, String> enabledTemplates,
+			ExtraParameters mergeParameters, Map<String, String> enabledTemplates,
 			WebHookTemplateContent templateForThisBuild) {
 		return "";
 	}

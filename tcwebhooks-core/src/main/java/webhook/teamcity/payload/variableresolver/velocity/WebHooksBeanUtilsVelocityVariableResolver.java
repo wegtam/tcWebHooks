@@ -25,17 +25,15 @@ public class WebHooksBeanUtilsVelocityVariableResolver implements VariableResolv
 	
 	
 	Object bean;
-	Map<String, ExtraParameters> extraAndTeamCityProperties;
+	ExtraParameters extraAndTeamCityProperties;
 	VelocityContext velocityContext = new VelocityContext();
 	
-	public WebHooksBeanUtilsVelocityVariableResolver(Object javaBean, Map<String, ExtraParameters> extraAndTeamCityProperties) {
+	public WebHooksBeanUtilsVelocityVariableResolver(Object javaBean, ExtraParameters extraAndTeamCityProperties) {
 		this.bean = javaBean;
 		this.extraAndTeamCityProperties = extraAndTeamCityProperties;
 		
-		for (String keyName : this.extraAndTeamCityProperties.keySet()){
-			for (Map.Entry<String,String> entry : extraAndTeamCityProperties.get(keyName).entrySet()) {
-				velocityContext.put(entry.getKey().replaceAll("\\.", "_"), entry.getValue());
-			}
+		for (Map.Entry<String,String> entry : extraAndTeamCityProperties.asMap().entrySet()) {
+			velocityContext.put(entry.getKey().replaceAll("\\.", "_"), entry.getValue());
 		}
 		
 		try {

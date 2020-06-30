@@ -26,7 +26,6 @@ public class UserPassAuthWithRealServerTest extends WebHookTestServerTestBase {
 
 	protected SortedMap<String, String> map = new TreeMap<>();
 	protected ExtraParameters  extraParameters  = new ExtraParameters(map); 
-	protected ExtraParameters  teamcityProperties  = new ExtraParameters(map); 
 	protected WebHookMockingFramework framework;
 	
 	WebHookTestServer server;
@@ -54,7 +53,7 @@ public class UserPassAuthWithRealServerTest extends WebHookTestServerTestBase {
 	
 	@Test
 	public void testRealWebHookWithAuth() throws JDOMException, IOException, InterruptedException {
-			framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
+			framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters);
 			framework.loadWebHookProjectSettingsFromConfigXml(new File("src/test/resources/project-settings-test-all-states-enabled-with-branch-and-auth.xml"));
 			framework.getWebHookListener().buildFinished(framework.getRunningBuild());
 			assertEquals(HttpServletResponse.SC_OK, server.getReponseCode());
@@ -62,7 +61,7 @@ public class UserPassAuthWithRealServerTest extends WebHookTestServerTestBase {
 	
 	@Test
 	public void testRealWebHookWithWrongAuth() throws JDOMException, IOException, InterruptedException {
-		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
+		framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters);
 		framework.loadWebHookProjectSettingsFromConfigXml(new File("src/test/resources/project-settings-test-all-states-enabled-with-branch-and-wrong-auth.xml"));
 		framework.getWebHookListener().buildFinished(framework.getRunningBuild());
 		

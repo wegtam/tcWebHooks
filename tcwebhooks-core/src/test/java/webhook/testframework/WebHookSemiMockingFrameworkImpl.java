@@ -95,8 +95,7 @@ public class WebHookSemiMockingFrameworkImpl implements WebHookMockingFramework 
 	SBuildType build2 = mock(SBuildType.class);
 	SBuildType build3 = mock(SBuildType.class);
 	
-	SortedMap<String, String> extraParameters;
-	SortedMap<String, String> teamcityProperties;
+	ExtraParameters extraParameters;
 	BuildStateEnum buildstateEnum;
 	
 	private WebHookPayloadManager webHookPayloadManager;
@@ -115,12 +114,11 @@ public class WebHookSemiMockingFrameworkImpl implements WebHookMockingFramework 
 	private ProjectIdResolver projectIdResolver = mock(ProjectIdResolver.class);
 
 	
-	public static WebHookSemiMockingFrameworkImpl create(BuildStateEnum buildState, ExtraParameters extraParameters, ExtraParameters teamcityProperties) {
+	public static WebHookSemiMockingFrameworkImpl create(BuildStateEnum buildState, ExtraParameters extraParameters) {
 		WebHookSemiMockingFrameworkImpl framework = new WebHookSemiMockingFrameworkImpl();
 		framework.setup();
 		framework.buildstateEnum = buildState;
 		framework.extraParameters = extraParameters;
-		framework.teamcityProperties = teamcityProperties;
 		
 		return framework;
 	}

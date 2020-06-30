@@ -4,6 +4,7 @@ package webhook.teamcity.payload.format;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 import jetbrains.buildServer.serverSide.SBuildServer;
@@ -100,15 +101,16 @@ public class WebHookPayloadTailoredJsonTest {
 		
 		WebHookPayloadTailoredJson whp = new WebHookPayloadTailoredJson(null, variableResolverManager);
 		
-		ExtraParameters extraParameters = new ExtraParameters(new TreeMap<String,String>());
-		ExtraParameters teamcityProperties = new ExtraParameters(new TreeMap<String,String>());
-		ExtraParameters templates = new ExtraParameters(new TreeMap<String,String>());
+		ExtraParameters extraParameters = new ExtraParameters();
+		extraParameters.addAll("params", new TreeMap<String,String>());
+		extraParameters.addAll("teamcity", new TreeMap<String,String>());
+		Map templates = new TreeMap<String,String>();
 		templates.put(WebHookPayloadDefaultTemplates.HTML_BUILDSTATUS_TEMPLATE, "test template");
 		
-		WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
+		WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters);
 		VariableResolverFactory variableResolverFactory = variableResolverManager.getVariableResolverFactory(PayloadTemplateEngineType.LEGACY);
 
-		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, framework.getServer(), framework.getRunningBuild(), sFinishedBuild, BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties, templates);
+		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, framework.getServer(), framework.getRunningBuild(), sFinishedBuild, BuildStateEnum.BUILD_FINISHED, extraParameters, templates);
 		whp.getStatusAsString(content, null);
 		
 	}
@@ -121,15 +123,15 @@ public class WebHookPayloadTailoredJsonTest {
 		ExtraParameters extraParameters = new ExtraParameters(new TreeMap<String,String>());
 		extraParameters.put("body", "{ \"someBody\" : \"This is a body for project ${projectName} \"}");
 		
-		ExtraParameters teamcityProperties = new ExtraParameters(new TreeMap<String,String>());
-		ExtraParameters templates = new ExtraParameters(new TreeMap<String,String>());
+		Map<String, String> templates = new TreeMap<>();
 		templates.put(WebHookPayloadDefaultTemplates.HTML_BUILDSTATUS_TEMPLATE, "test template");
 		
-		WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties);
+		WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters);
 		VariableResolverFactory variableResolverFactory = variableResolverManager.getVariableResolverFactory(PayloadTemplateEngineType.LEGACY);
+		extraParameters.addAll("teamcity", framework.getRunningBuild().getParametersProvider().getAll());
 
 		
-		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, framework.getServer(), framework.getRunningBuild(), sFinishedBuild, BuildStateEnum.BUILD_FINISHED, extraParameters, teamcityProperties, templates);
+		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, framework.getServer(), framework.getRunningBuild(), sFinishedBuild, BuildStateEnum.BUILD_FINISHED, extraParameters, templates);
 		whp.getStatusAsString(content, null);
 		assertEquals("{ \"someBody\" : \"This is a body for project Test Project \"}", whp.getStatusAsString(content, null));
 		
