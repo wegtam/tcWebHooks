@@ -90,6 +90,24 @@ public class ExtraParameters extends ArrayList<WebHookParameterModel> {
 		}
 	}
 	
+	public void putAll(String context, List<WebHookParameter> webHookParameters) {
+		for (WebHookParameter parameter : webHookParameters) {
+			WebHookParameterModel previous = getActual(context, parameter.getName());
+			if (previous != null) {
+				this.remove(previous);
+				Loggers.SERVER.debug("ExtraParameters :: Removed existing WebHookParameter: " + previous.getContext() + " : " + previous.getName() + " : " + previous.getValue());
+			}
+			WebHookParameterModel newHookParameterModel = new WebHookParameterModel(context,
+					context,
+					parameter.getName(),
+					parameter.getValue(),
+					parameter.getSecure(),
+					parameter.getIncludedInLegacyPayloads());
+			add(newHookParameterModel);
+			Loggers.SERVER.debug("ExtraParameters :: Added WebHookParameter: " + newHookParameterModel.getContext() + " : " + newHookParameterModel.getName() + " : " + newHookParameterModel.getValue());
+		}
+	}
+	
 	private WebHookParameterModel getActual(String context, String key) {
 		for (WebHookParameterModel webHookParameter : this) {
 			if (webHookParameter.getContext().equalsIgnoreCase(context) 

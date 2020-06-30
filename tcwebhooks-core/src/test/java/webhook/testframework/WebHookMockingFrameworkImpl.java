@@ -3,11 +3,13 @@ package webhook.testframework;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.any;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -75,6 +77,7 @@ import webhook.teamcity.settings.WebHookProjectSettings;
 import webhook.teamcity.settings.WebHookSettingsManager;
 import webhook.teamcity.settings.config.WebHookTemplateConfig;
 import webhook.teamcity.settings.entity.WebHookTemplateEntity;
+import webhook.teamcity.settings.project.WebHookParameterStore;
 import webhook.testframework.util.ConfigLoaderUtil;
 
 public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
@@ -92,8 +95,10 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 	WebHookVariableResolverManager webHookVariableResolverManager = mock(WebHookVariableResolverManager.class);
 	VariableResolverFactory variableResolverFactory = new WebHooksBeanUtilsVariableResolverFactory();
 	VariableResolverFactory legacyVariableResolverFactory = new WebHooksBeanUtilsLegacyVariableResolverFactory();
-	 
-	WebHookContentBuilder contentBuilder = new WebHookContentBuilder(sBuildServer, resolver, webHookVariableResolverManager);
+	
+	WebHookParameterStore webHookParameterStore = mock(WebHookParameterStore.class); 
+
+	WebHookContentBuilder contentBuilder = new WebHookContentBuilder(sBuildServer, resolver, webHookVariableResolverManager, webHookParameterStore);
 	WebHookPayloadTemplate template;
 	WebHookPayload payloadJson = new WebHookPayloadJson(manager, webHookVariableResolverManager);
 	WebHookPayload payloadXml = new WebHookPayloadXml(manager, webHookVariableResolverManager);
@@ -221,6 +226,8 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 
 		((MockSBuildType) sBuildType).setMockingFrameworkInstance(this);
 		
+		when(webHookParameterStore.getAllWebHookParameters(any())).thenReturn(Collections.emptyList());
+
 	}
 	
 	@Override
@@ -330,7 +337,7 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 	public static WebHookMockingFramework create(BuildStateEnum buildState, ExtraParameters extraParameters) {
 		WebHookMockingFrameworkImpl framework = new WebHookMockingFrameworkImpl();
 		framework.buildstateEnum = buildState;
-		framework.extraParameters = WebHookContentBuilder.mergeParameters(extraParameters.getWebHookParameters().asMap(), framework.sRunningBuild, "");
+		framework.extraParameters = framework.contentBuilder.mergeParameters(extraParameters.getWebHookParameters().asMap(), framework.sProject, framework.sRunningBuild, "");
 		framework.content = new WebHookPayloadContent(framework.variableResolverFactory, framework.sBuildServer, framework.sRunningBuild, framework.previousSuccessfulBuild, buildState, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
 		return framework;
 	}
