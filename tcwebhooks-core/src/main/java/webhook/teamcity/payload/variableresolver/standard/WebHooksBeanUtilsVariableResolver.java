@@ -5,18 +5,18 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import jetbrains.buildServer.serverSide.SProject;
 import webhook.teamcity.Loggers;
 import webhook.teamcity.payload.WebHookContentObjectSerialiser;
 import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.util.StringSanitiser;
 import webhook.teamcity.payload.util.StringUtils;
 import webhook.teamcity.payload.variableresolver.VariableResolver;
+import webhook.teamcity.settings.secure.WebHookSecretResolver;
 
 /**
  * This is a VariableResolver for the TemplateMatcher
@@ -37,16 +37,26 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 	private static final String NOW = "now(";
 	private static final String SANITISE = "sanitise(";
 	private static final String SANITIZE = "sanitize(";
+	private static final String SECURE = "secure(";
 	private static final String SUBSTR = "substr(";
 	private static final String SUFFIX = ")";
+	private final SProject sProject;
 	private final Object bean;
 	private final ExtraParameters extraParameters;
 	private final WebHookContentObjectSerialiser webhookPayload;
+	private final WebHookSecretResolver webHookSecretResolver;
 
-	public WebHooksBeanUtilsVariableResolver(WebHookContentObjectSerialiser webhookPayload, Object javaBean, ExtraParameters extraAndTeamCityProperties) {
+	public WebHooksBeanUtilsVariableResolver(
+			SProject sProject,
+			WebHookContentObjectSerialiser webhookPayload, 
+			Object javaBean, 
+			ExtraParameters extraAndTeamCityProperties,
+			WebHookSecretResolver webHookSecretResolver) {
+		this.sProject = sProject;
 		this.webhookPayload = webhookPayload;
 		this.bean = javaBean;
 		this.extraParameters = extraAndTeamCityProperties;
+		this.webHookSecretResolver = webHookSecretResolver;
 	}
 
 	@Override
@@ -142,6 +152,14 @@ public class WebHooksBeanUtilsVariableResolver implements VariableResolver {
 			} catch (NullPointerException | IllegalArgumentException |
 					 IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				// do nothing and let the logic below handle it.
+			}
+		}
+		
+		if (variableName.startsWith(SECURE) && variableName.endsWith(SUFFIX)){
+			String tokenString = variableName.substring(SECURE.length(), variableName.length() - SUFFIX.length());
+			String resolvedString = this.webHookSecretResolver.getSecret(sProject, tokenString);
+			if (resolvedString != null){
+				return resolvedString;
 			}
 		}
 

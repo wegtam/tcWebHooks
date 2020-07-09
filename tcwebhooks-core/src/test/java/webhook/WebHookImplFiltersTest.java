@@ -16,18 +16,21 @@ import webhook.teamcity.payload.variableresolver.VariableResolverFactory;
 import webhook.teamcity.payload.variableresolver.standard.WebHooksBeanUtilsVariableResolver;
 import webhook.teamcity.payload.variableresolver.standard.WebHooksBeanUtilsVariableResolverFactory;
 import webhook.teamcity.settings.WebHookFilterConfig;
+import webhook.teamcity.settings.secure.WebHookSecretResolver;
+import webhook.teamcity.settings.secure.WebHookSecretResolverNoOpImpl;
 
 public class WebHookImplFiltersTest extends VariableMessageBuilderTestBase {
 	
 	TestingWebHookFactory factory = new TestingWebHookFactory();
 	VariableResolverFactory variableResolverFactory = new WebHooksBeanUtilsVariableResolverFactory();
+	WebHookSecretResolver webHookSecretResolver = new WebHookSecretResolverNoOpImpl();
 
 	@Test
 	public void testCheckSingleFilterPasses() {
 		
 		
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, sBuildServer, sRunningBuild, previousSuccessfulBuild, BuildStateEnum.BEFORE_BUILD_FINISHED, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
-		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(), content, allProperties); 
+		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(content.getProject(), new SimpleSerialiser(), content, allProperties, webHookSecretResolver); 
 		WebHook webHook = factory.getWebHook();
 		webHook.setEnabled(true);
 		webHook.addFilter(WebHookFilterConfig.create("teamcity", "^.+eam.+$", true));
@@ -40,7 +43,7 @@ public class WebHookImplFiltersTest extends VariableMessageBuilderTestBase {
 	public void testCheckSingleFilterFails() {
 		
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, sBuildServer, sRunningBuild, previousSuccessfulBuild, BuildStateEnum.BEFORE_BUILD_FINISHED, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
-		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(), content, allProperties); 
+		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(content.getProject(), new SimpleSerialiser(), content, allProperties, webHookSecretResolver); 
 		WebHook webHook = factory.getWebHook();
 		webHook.setEnabled(true);
 		webHook.addFilter(WebHookFilterConfig.create("something", "^.+eam.+$", true));
@@ -53,7 +56,7 @@ public class WebHookImplFiltersTest extends VariableMessageBuilderTestBase {
 	public void testCheckSingleFilterPassesFromBean() {
 		
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, sBuildServer, sRunningBuild, previousSuccessfulBuild, BuildStateEnum.BEFORE_BUILD_FINISHED, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
-		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(), content, allProperties); 
+		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(content.getProject(), new SimpleSerialiser(), content, allProperties, webHookSecretResolver); 
 		WebHook webHook = factory.getWebHook();
 		webHook.setEnabled(true);
 		webHook.addFilter(WebHookFilterConfig.create("${buildNumber}", "^12.+$", true));
@@ -66,7 +69,7 @@ public class WebHookImplFiltersTest extends VariableMessageBuilderTestBase {
 	public void testCheckSingleFilterFailsFromBean() {
 		
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, sBuildServer, sRunningBuild, previousSuccessfulBuild, BuildStateEnum.BEFORE_BUILD_FINISHED, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
-		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(), content, allProperties); 
+		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(content.getProject(), new SimpleSerialiser(), content, allProperties, webHookSecretResolver); 
 		WebHook webHook = factory.getWebHook();
 		webHook.setEnabled(true);
 		webHook.addFilter(WebHookFilterConfig.create("${buildNumber}", "^.+1234.+$", true));
@@ -79,7 +82,7 @@ public class WebHookImplFiltersTest extends VariableMessageBuilderTestBase {
 	public void testCheckTwoFiltersFailWithGoodAndBadFilterFromBean() {
 		
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, sBuildServer, sRunningBuild, previousSuccessfulBuild, BuildStateEnum.BEFORE_BUILD_FINISHED, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
-		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(), content, allProperties); 
+		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(content.getProject(), new SimpleSerialiser(), content, allProperties, webHookSecretResolver); 
 		WebHook webHook = factory.getWebHook();
 		webHook.setEnabled(true);
 		webHook.addFilter(WebHookFilterConfig.create("${projectName}", "^Test\\s+Project$", true));
@@ -93,7 +96,7 @@ public class WebHookImplFiltersTest extends VariableMessageBuilderTestBase {
 	public void testCheckTwoFiltersFailWithTwoBadFiltersFromBean() {
 		
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, sBuildServer, sRunningBuild, previousSuccessfulBuild, BuildStateEnum.BEFORE_BUILD_FINISHED, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
-		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(), content, allProperties); 
+		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(content.getProject(), new SimpleSerialiser(), content, allProperties, webHookSecretResolver); 
 		WebHook webHook = factory.getWebHook();
 		webHook.setEnabled(true);
 		webHook.addFilter(WebHookFilterConfig.create("${projectName}", "^Incorrect Project Name$", true));
@@ -107,7 +110,7 @@ public class WebHookImplFiltersTest extends VariableMessageBuilderTestBase {
 	public void testCheckTwoFiltersPassWithTwoGoodFiltersFromBean() {
 		
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, sBuildServer, sRunningBuild, previousSuccessfulBuild, BuildStateEnum.BEFORE_BUILD_FINISHED, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
-		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(), content, allProperties); 
+		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(content.getProject(), new SimpleSerialiser(), content, allProperties, webHookSecretResolver); 
 		WebHook webHook = factory.getWebHook();
 		webHook.setEnabled(true);
 		webHook.addFilter(WebHookFilterConfig.create("${projectName}", "^[Tt]est [Pp]roject$", true));
@@ -122,7 +125,7 @@ public class WebHookImplFiltersTest extends VariableMessageBuilderTestBase {
 	public void testCheckTwoFiltersPassWithOneBadDisabledAndOneGoodEnabledFilterFromBean() {
 		
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, sBuildServer, sRunningBuild, previousSuccessfulBuild, BuildStateEnum.BEFORE_BUILD_FINISHED, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
-		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(), content, allProperties); 
+		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(content.getProject(), new SimpleSerialiser(), content, allProperties, webHookSecretResolver); 
 		WebHook webHook = factory.getWebHook();
 		webHook.setEnabled(true);
 		webHook.addFilter(WebHookFilterConfig.create("${projectName}", "^[Tt]est [Pp]roject$", true));
@@ -137,7 +140,7 @@ public class WebHookImplFiltersTest extends VariableMessageBuilderTestBase {
 	public void testCheckFilterPassWithoutBeginAndStartCharsFilterFromBean() {
 		
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, sBuildServer, sRunningBuild, previousSuccessfulBuild, BuildStateEnum.BEFORE_BUILD_FINISHED, extraParameters, WebHookPayloadDefaultTemplates.getDefaultEnabledPayloadTemplates());
-		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(),content, allProperties); 
+		VariableResolver resolver = new WebHooksBeanUtilsVariableResolver(content.getProject(), new SimpleSerialiser(),content, allProperties, webHookSecretResolver); 
 		WebHook webHook = factory.getWebHook();
 		webHook.setEnabled(true);
 		webHook.addFilter(WebHookFilterConfig.create("Some big long string", ".+ong.+", true));

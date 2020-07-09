@@ -209,7 +209,7 @@ public class WebHookContentBuilder {
 	public String resolveTemplatedUrl(VariableResolverFactory variableResolverFactory, WebHook wh, String url, BuildStateEnum buildState, SBuild sBuild, WebHookContentObjectSerialiser serialiser, ExtraParameters extraParameters, Map<String,String> templates){
 		if (url.contains(variableResolverFactory.getPayloadTemplateType().getVariablePrefix()) && url.contains(variableResolverFactory.getPayloadTemplateType().getVariableSuffix())){
 			WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, getPreviousNonPersonalBuild(wh, sBuild), buildState, extraParameters, templates);
-			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(serialiser,content, content.getAllParameters());
+			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(content.getProject(), serialiser,content, content.getAllParameters());
 			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(url, variableResolver);
 			return builder.build();
 		} else {
@@ -221,7 +221,7 @@ public class WebHookContentBuilder {
 	public String resolveTemplatedUrl(VariableResolverFactory variableResolverFactory, String url, BuildStateEnum buildState, SBuild sBuild, WebHookContentObjectSerialiser serialiser, ExtraParameters extraParameters, Map<String,String> templates, String user, String comment){
 		if (url.contains(variableResolverFactory.getPayloadTemplateType().getVariablePrefix()) && url.contains(variableResolverFactory.getPayloadTemplateType().getVariableSuffix())){
 			WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, buildState, extraParameters, templates, user, comment);
-			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(serialiser,content, content.getAllParameters());
+			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(content.getProject(), serialiser,content, content.getAllParameters());
 			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(url, variableResolver);
 			return builder.build();
 		} else {
@@ -233,7 +233,7 @@ public class WebHookContentBuilder {
 	public String resolveTemplatedUrl(VariableResolverFactory variableResolverFactory, String url, BuildStateEnum buildState, SQueuedBuild sQueuedBuild, WebHookContentObjectSerialiser serialiser, ExtraParameters extraParameters, Map<String,String> templates, String user, String comment){
 		if (url.contains(variableResolverFactory.getPayloadTemplateType().getVariablePrefix()) && url.contains(variableResolverFactory.getPayloadTemplateType().getVariableSuffix())){
 			WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sQueuedBuild, buildState, extraParameters, templates, user, comment);
-			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(serialiser,content, content.getAllParameters());
+			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(content.getProject(), serialiser,content, content.getAllParameters());
 			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(url, variableResolver);
 			return builder.build();
 		} else {
@@ -244,7 +244,7 @@ public class WebHookContentBuilder {
 	public String resolveTemplatedUrl(VariableResolverFactory variableResolverFactory, String url, BuildStateEnum buildState, WebHookResponsibilityHolder responsibilityHolder, WebHookContentObjectSerialiser serialiser, ExtraParameters extraParameters, Map<String,String> templates){
 		if (url.contains(variableResolverFactory.getPayloadTemplateType().getVariablePrefix()) && url.contains(variableResolverFactory.getPayloadTemplateType().getVariableSuffix())){
 			WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, responsibilityHolder, buildState, extraParameters, templates);
-			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(serialiser,content, content.getAllParameters());
+			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(content.getProject(), serialiser,content, content.getAllParameters());
 			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(url, variableResolver);
 			return builder.build();
 		} else {
@@ -254,22 +254,22 @@ public class WebHookContentBuilder {
 	
 	public VariableResolver getVariableResolver(VariableResolverFactory variableResolverFactory, WebHook wh, BuildStateEnum buildState, SBuild runningBuild, WebHookContentObjectSerialiser serialiser, ExtraParameters extraParameters, Map<String,String> templates){
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, runningBuild, getPreviousNonPersonalBuild(wh, runningBuild), buildState, extraParameters, templates);
-		return variableResolverFactory.buildVariableResolver(serialiser, content, content.getAllParameters());
+		return variableResolverFactory.buildVariableResolver(content.getProject(), serialiser, content, content.getAllParameters());
 	}
 	
 	public VariableResolver getVariableResolver(VariableResolverFactory variableResolverFactory, BuildStateEnum buildState, SBuild runningBuild, WebHookContentObjectSerialiser serialiser, ExtraParameters extraParameters, Map<String,String> templates, String user, String comment){
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, runningBuild, buildState, extraParameters, templates, user, comment);
-		return variableResolverFactory.buildVariableResolver(serialiser, content, content.getAllParameters());
+		return variableResolverFactory.buildVariableResolver(content.getProject(), serialiser, content, content.getAllParameters());
 	}
 	
 	public VariableResolver getVariableResolver(VariableResolverFactory variableResolverFactory, BuildStateEnum buildState, SQueuedBuild queuedBuild, WebHookContentObjectSerialiser serialiser, ExtraParameters extraParameters, Map<String,String> templates, String user, String comment){
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory,  server,  queuedBuild,  buildState, extraParameters, templates, user, comment);
-		return variableResolverFactory.buildVariableResolver(serialiser, content, content.getAllParameters());
+		return variableResolverFactory.buildVariableResolver(content.getProject(), serialiser, content, content.getAllParameters());
 	}
 	
 	public VariableResolver getVariableResolver(VariableResolverFactory variableResolverFactory, BuildStateEnum buildState, WebHookResponsibilityHolder responsibilityHolder, WebHookContentObjectSerialiser serialiser, ExtraParameters extraParameters, Map<String,String> templates){
 		WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory,  server, responsibilityHolder,  buildState, extraParameters,  templates);
-		return variableResolverFactory.buildVariableResolver(serialiser, content, content.getAllParameters());
+		return variableResolverFactory.buildVariableResolver(content.getProject(), serialiser, content, content.getAllParameters());
 	}
 	
 	public WebHookTemplateContent findTemplateForState(

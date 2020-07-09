@@ -1,8 +1,5 @@
 package webhook.teamcity.payload.variableresolver.standard;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 
 import lombok.AllArgsConstructor;
@@ -21,7 +18,7 @@ public class WebHooksBeanUtilsVariableResolverTest {
 		JavaBean javaBean = new JavaBean("bt123", "project01");
 		
 		ExtraParameters extraParameters = new ExtraParameters();
-		VariableResolver variableResolver = new WebHooksBeanUtilsVariableResolver(webHookContentObjectSerialiser, javaBean, extraParameters);
+		VariableResolver variableResolver = new WebHooksBeanUtilsVariableResolver(null, webHookContentObjectSerialiser, javaBean, extraParameters, null);
 	}
 
 	@Data @AllArgsConstructor

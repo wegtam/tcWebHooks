@@ -302,6 +302,10 @@
 		class="webhook.teamcity.settings.project.WebHookParameterStoreImpl"
 		/>
 		
+	<bean id="webHookSecretResolverFactory" 
+		class="webhook.teamcity.settings.secure.WebHookSecretResolverFactory"
+		/>
+		
 	<bean id="webHookVariableResolverManager"		
 		class="webhook.teamcity.payload.variableresolver.WebHookVariableResolverManagerImpl"
 		/>
@@ -310,18 +314,21 @@
 		class="webhook.teamcity.payload.variableresolver.standard.WebHooksBeanUtilsVariableResolverFactory"
 		init-method="register">
 		<property name="webHookVariableResolverManager" ref="webHookVariableResolverManager"/>
+		<property name="webHookSecretResolverFactory" ref="webHookSecretResolverFactory"/>
 	</bean>
 
 	<bean id="webHooksBeanUtilsLegacyVariableResolverFactory"
 		class="webhook.teamcity.payload.variableresolver.standard.WebHooksBeanUtilsLegacyVariableResolverFactory"
 		init-method="register">
 		<property name="webHookVariableResolverManager" ref="webHookVariableResolverManager"/>
+		<property name="webHookSecretResolverFactory" ref="webHookSecretResolverFactory"/>
 	</bean>
 	
 	<bean id="webHooksBeanUtilsVelocityVariableResolverFactory"
 		class="webhook.teamcity.payload.variableresolver.velocity.WebHooksBeanUtilsVelocityVariableResolverFactory"
 		init-method="register">
 		<property name="webHookVariableResolverManager" ref="webHookVariableResolverManager"/>
+		<property name="webHookSecretResolverFactory" ref="webHookSecretResolverFactory"/>
 	</bean>
 		
 	<bean id="webHookUserRequestedExecutor"

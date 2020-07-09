@@ -4,12 +4,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 
+import jetbrains.buildServer.serverSide.SProject;
 import webhook.teamcity.Loggers;
+import webhook.teamcity.payload.WebHookContentObjectSerialiser;
 import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.variableresolver.VariableResolver;
+import webhook.teamcity.settings.secure.WebHookSecretResolver;
+import webhook.teamcity.settings.secure.WebHookSecretResolverFactory;
 
 /**
  * This is a VariableResolver for the TemplateMatcher
@@ -24,13 +29,21 @@ import webhook.teamcity.payload.variableresolver.VariableResolver;
 public class WebHooksBeanUtilsVelocityVariableResolver implements VariableResolver, Context {
 	
 	
-	Object bean;
-	ExtraParameters extraAndTeamCityProperties;
-	VelocityContext velocityContext = new VelocityContext();
+	private static final String SECURE = "secure:";
+	private Object bean;
+	private VelocityContext velocityContext = new VelocityContext();
+	private SProject sProject;
+	private WebHookSecretResolver webHookSecretResolver;
 	
-	public WebHooksBeanUtilsVelocityVariableResolver(Object javaBean, ExtraParameters extraAndTeamCityProperties) {
+	public WebHooksBeanUtilsVelocityVariableResolver(
+			SProject sProject,
+			WebHookContentObjectSerialiser webhookPayload, 
+			Object javaBean, 
+			ExtraParameters extraAndTeamCityProperties,
+			WebHookSecretResolver webHookSecretResolver) {
+		this.sProject = sProject;
 		this.bean = javaBean;
-		this.extraAndTeamCityProperties = extraAndTeamCityProperties;
+		this.webHookSecretResolver = webHookSecretResolver;
 		
 		for (Map.Entry<String,String> entry : extraAndTeamCityProperties.asMap().entrySet()) {
 			velocityContext.put(entry.getKey().replaceAll("\\.", "_"), entry.getValue());
@@ -61,6 +74,12 @@ public class WebHooksBeanUtilsVelocityVariableResolver implements VariableResolv
 	
 	@Override
 	public String resolve(String variableName) {
+		if (variableName.startsWith(SECURE) && StringUtils.isNotBlank(variableName.substring(SECURE.length()))) {
+			String secret = this.webHookSecretResolver.getSecret(this.sProject, variableName.substring(SECURE.length()));
+			if (secret != null) {
+				return secret;
+			}
+		}
 		return (String)get(variableName);
 	}
 

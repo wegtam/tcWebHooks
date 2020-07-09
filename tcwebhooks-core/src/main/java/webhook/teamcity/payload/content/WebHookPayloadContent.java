@@ -773,7 +773,7 @@ public class WebHookPayloadContent {
 			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(
 						htmlStatusTemplate, 
 						variableResolverFactory.buildVariableResolver(
-									new SimpleSerialiser(), this, getAllParameters()
+									this.getProject(), new SimpleSerialiser(), this, getAllParameters()
 								)
 					);
 			this.buildStatusHtml = builder.build();
@@ -857,14 +857,14 @@ public class WebHookPayloadContent {
 		public ExtraParameters getExtraParameters(VariableResolverFactory variableResolverFactory) {
 			if (!this.extraParameters.isEmpty()){
 				VariableMessageBuilder builder;
-				VariableResolver resolver = variableResolverFactory.buildVariableResolver(new SimpleSerialiser(), this, getAllParameters());
+				VariableResolver resolver = variableResolverFactory.buildVariableResolver(getProject(), new SimpleSerialiser(), this, getAllParameters());
 				ExtraParameters resolvedParametersMap = new ExtraParameters();
 
 				for (Entry<String,String> entry  : extraParameters.getEntriesAsSet()){
 					builder = variableResolverFactory.createVariableMessageBuilder(entry.getValue(), resolver);
 					resolvedParametersMap.put(entry.getKey(), builder.build());
 				}
-				resolver = new WebHooksBeanUtilsVariableResolver(new SimpleSerialiser(),this, getAllParameters());
+				resolver = new WebHooksBeanUtilsVariableResolver(getProject(), new SimpleSerialiser(),this, getAllParameters(), null);
 				for (Entry<String,String> entry  : extraParameters.getEntriesAsSet()){
 					builder = variableResolverFactory.createVariableMessageBuilder(entry.getValue(), resolver);
 					resolvedParametersMap.put(entry.getKey(), builder.build());
