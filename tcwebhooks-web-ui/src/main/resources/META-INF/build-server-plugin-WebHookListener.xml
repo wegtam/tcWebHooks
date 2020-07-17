@@ -298,8 +298,8 @@
 		class="webhook.teamcity.TeamCityCoreFacadeImpl"
 		/>
 		
-	<bean id="webHookParameterStore"
-		class="webhook.teamcity.settings.project.WebHookParameterStoreImpl"
+	<bean id="webHookParameterStoreFactory"
+		class="webhook.teamcity.settings.project.WebHookParameterStoreFactoryImpl"
 		/>
 		
 	<bean id="webHookSecretResolverFactory" 

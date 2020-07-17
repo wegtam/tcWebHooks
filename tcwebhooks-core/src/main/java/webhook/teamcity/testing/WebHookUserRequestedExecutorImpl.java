@@ -40,6 +40,7 @@ import webhook.teamcity.settings.WebHookHeaderConfig;
 import webhook.teamcity.settings.WebHookMainSettings;
 import webhook.teamcity.settings.config.WebHookTemplateConfig;
 import webhook.teamcity.settings.project.WebHookParameterStore;
+import webhook.teamcity.settings.project.WebHookParameterStoreFactory;
 import webhook.teamcity.testing.model.WebHookExecutionRequest;
 import webhook.teamcity.testing.model.WebHookRenderResult;
 import webhook.teamcity.testing.model.WebHookTemplateExecutionRequest;
@@ -77,7 +78,7 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 			WebHookContentBuilder webHookContentBuilder,
 			WebHookVariableResolverManager webHookVariableResolverManager,
 			ProjectIdResolver projectIdResolver,
-			WebHookParameterStore webHookParameterStore
+			WebHookParameterStoreFactory webHookParameterStoreFactory
 		) {
 		myServer = server;
 		myMainSettings = mainSettings;
@@ -91,7 +92,7 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 		myWebHookVariableResolverManager = webHookVariableResolverManager;
 		myWebHookPayloadManager = webHookPayloadManager;
 		myProjectIdResolver = projectIdResolver;
-		myWebHookParameterStore = webHookParameterStore;
+		myWebHookParameterStore = webHookParameterStoreFactory.getWebHookParameterStore();
 	}
 
 

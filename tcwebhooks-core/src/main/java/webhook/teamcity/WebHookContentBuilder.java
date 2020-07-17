@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.jetbrains.annotations.Nullable;
 
-import jetbrains.buildServer.serverSide.ParametersSupport;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SFinishedBuild;
@@ -30,6 +28,7 @@ import webhook.teamcity.payload.variableresolver.WebHookVariableResolverManager;
 import webhook.teamcity.settings.WebHookConfig;
 import webhook.teamcity.settings.project.WebHookParameter;
 import webhook.teamcity.settings.project.WebHookParameterStore;
+import webhook.teamcity.settings.project.WebHookParameterStoreFactory;
 
 public class WebHookContentBuilder {
 	private final SBuildServer server;

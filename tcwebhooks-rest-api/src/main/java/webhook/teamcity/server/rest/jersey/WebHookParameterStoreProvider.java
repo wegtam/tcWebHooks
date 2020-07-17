@@ -13,13 +13,14 @@ import com.sun.jersey.spi.inject.Injectable;
 import com.sun.jersey.spi.inject.InjectableProvider;
 
 import webhook.teamcity.settings.project.WebHookParameterStore;
+import webhook.teamcity.settings.project.WebHookParameterStoreFactory;
 
 @Provider
 public class WebHookParameterStoreProvider implements InjectableProvider<Context, Type>, Injectable<WebHookParameterStore> {
 	private final WebHookParameterStore parameterStore;
 
-	public WebHookParameterStoreProvider(@NotNull final WebHookParameterStore webHookParameterStore) {
-		this.parameterStore = webHookParameterStore;
+	public WebHookParameterStoreProvider(@NotNull final WebHookParameterStoreFactory webHookParameterStoreFactory) {
+		this.parameterStore = webHookParameterStoreFactory.getWebHookParameterStore();
 	}
 
 	public ComponentScope getScope() {

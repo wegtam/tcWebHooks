@@ -19,7 +19,7 @@ public class WebHookSecretResolverFactory {
 			webHookSecretResolver = new WebHookSecretResolverNoOpImpl();
 			Loggers.SERVER.debug("WebHookSecretResolverFactory:: NumberFormatException... WebHookSecretResolver is: '" + webHookSecretResolver.getClass() + "'.");
 		}
-		Loggers.SERVER.debug("WebHookSecretResolverFactory:: Teamcity build is: '" + Integer.valueOf(sBuildServer.getBuildNumber()) + "'. WebHookSecretResolver is: '" + webHookSecretResolver.getClass() + "'.");
+		Loggers.SERVER.debug("WebHookSecretResolverFactory:: Teamcity build is: '" + sBuildServer.getBuildNumber() + "'. WebHookSecretResolver is: '" + webHookSecretResolver.getClass() + "'.");
 	}
 	
 	public WebHookSecretResolver getWebHookSecretResolver() {
