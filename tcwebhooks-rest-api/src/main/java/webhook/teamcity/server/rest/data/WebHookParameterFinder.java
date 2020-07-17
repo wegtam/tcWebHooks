@@ -1,9 +1,7 @@
 package webhook.teamcity.server.rest.data;
 
-import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import jetbrains.buildServer.server.rest.data.Locator;
 import jetbrains.buildServer.server.rest.model.Fields;
@@ -15,6 +13,7 @@ import webhook.teamcity.server.rest.model.parameter.ProjectWebhookParameters;
 import webhook.teamcity.server.rest.util.BeanContext;
 import webhook.teamcity.settings.project.WebHookParameter;
 import webhook.teamcity.settings.project.WebHookParameterStore;
+import webhook.teamcity.settings.project.WebHookParameterStoreFactory;
 
 public class WebHookParameterFinder {
 	
@@ -23,10 +22,10 @@ public class WebHookParameterFinder {
 	
 	public WebHookParameterFinder(
 			@NotNull final ProjectManager projectManager,
-			@NotNull final WebHookParameterStore webHookParameterStore)
+			@NotNull final WebHookParameterStoreFactory webHookParameterStoreFactory)
 	{
 		this.projectManager = projectManager;
-		this.myWebHookParameterStore = webHookParameterStore;
+		this.myWebHookParameterStore = webHookParameterStoreFactory.getWebHookParameterStore();
 	}
 
 	public static String getLocator(final WebHookParameter webhookParameter) {

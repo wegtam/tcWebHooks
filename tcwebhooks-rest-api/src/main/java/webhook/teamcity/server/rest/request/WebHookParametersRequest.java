@@ -1,6 +1,7 @@
 package webhook.teamcity.server.rest.request;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -152,6 +153,22 @@ public class WebHookParametersRequest {
 		}
 	}
 
+	@DELETE
+	@Path("/{projectId}/{parameterId}")
+	@Produces({ "application/xml", "application/json" })
+	public ProjectWebhookParameter deleteParameter(
+			@PathParam("projectId") String projectExternalId, 
+			@PathParam("parameterId") String parameterId, 
+			@QueryParam("fields") String fields,
+			ProjectWebhookParameter updatedParameter
+			)
+	{
+		SProject sProject = resolveProject(projectExternalId);
+		checkParameterWritePermission(sProject.getProjectId());
+		ProjectWebhookParameter webhookParameter = this.myDataProvider.getWebHookParameterFinder().findWebhookParameter(sProject, new Fields(fields), myBeanContext);
+		this.myWebHookParameterStore.removeWebHookParameter(sProject.getProjectId(), webhookParameter);
+		return webhookParameter;
+	}
 	private void checkParameterReadPermission(String projectInternalId) {
 		try {
 			myPermissionChecker.checkProjectPermission(Permission.VIEW_PROJECT, projectInternalId);

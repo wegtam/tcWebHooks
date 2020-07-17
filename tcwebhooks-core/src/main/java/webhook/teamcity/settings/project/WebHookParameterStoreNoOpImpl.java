@@ -1,5 +1,6 @@
 package webhook.teamcity.settings.project;
 
+import java.util.Collections;
 import java.util.List;
 
 import jetbrains.buildServer.serverSide.SProject;
@@ -30,12 +31,12 @@ public class WebHookParameterStoreNoOpImpl implements WebHookParameterStore {
 
 	@Override
 	public List<WebHookParameter> getAllWebHookParameters(SProject sProject) {
-		throw new OperationUnsupportedException(TEAMCITY_TOO_OLD_MESSAGE);
+		return Collections.emptyList();
 	}
 
 	@Override
 	public List<WebHookParameter> getOwnWebHookParameters(SProject sProject) {
-		throw new OperationUnsupportedException(TEAMCITY_TOO_OLD_MESSAGE);
+		return Collections.emptyList();
 	}
 
 	@Override

@@ -44,6 +44,13 @@ public class WebHookContentBuilder {
 		this.webHookParameterStore = webHookParameterStore;
 	}
 	
+	public WebHookContentBuilder(SBuildServer server, WebHookTemplateResolver resolver, WebHookVariableResolverManager variableResolverManager, WebHookParameterStoreFactory webHookParameterStoreFactory) {
+		this.server = server;
+		this.webHookTemplateResolver = resolver;
+		this.webHookVariableResolverManager = variableResolverManager;
+		this.webHookParameterStore = webHookParameterStoreFactory.getWebHookParameterStore();
+	}
+	
 	public WebHook buildWebHookContent(WebHook wh, WebHookConfig whc, SQueuedBuild sBuild, BuildStateEnum state,
 			String user, String comment, boolean overrideIsEnabled) {
 		WebHookPayload payloadFormat = webHookTemplateResolver.getTemplatePayloadFormat(whc.getPayloadTemplate());

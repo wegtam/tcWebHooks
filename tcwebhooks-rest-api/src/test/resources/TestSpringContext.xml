@@ -84,8 +84,8 @@
 		class="webhook.teamcity.payload.WebHookTemplateResolver"
 		/>
 		
-	<bean id="webHookParameterStore"
-		class="webhook.teamcity.settings.project.WebHookParameterStoreImpl"
+	<bean id="webHookParameterStoreFactory"
+		class="webhook.teamcity.settings.project.WebHookParameterStoreFactoryImpl"
 		/>
 		
 	<bean id="teamCityCoreFacade"
