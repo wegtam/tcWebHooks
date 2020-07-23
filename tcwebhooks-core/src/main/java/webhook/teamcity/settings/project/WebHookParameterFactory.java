@@ -36,8 +36,8 @@ public class WebHookParameterFactory {
 		
 		properties.put(NAME_KEY, model.getName());
 		properties.put(VALUE_KEY, model.getValue());
-		properties.put(SECURE_KEY, model.getSecure().toString());
-		properties.put(LEGACY_PAYLOADS_KEY, model.getIncludedInLegacyPayloads().toString());
+		properties.put(SECURE_KEY, model.getSecure() != null ? model.getSecure().toString() : "false");
+		properties.put(LEGACY_PAYLOADS_KEY, model.getIncludedInLegacyPayloads() != null ? model.getIncludedInLegacyPayloads().toString() : "false");
 		
 		return properties;
 	}

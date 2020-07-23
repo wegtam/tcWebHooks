@@ -39,7 +39,7 @@ public class WebHookParameterDataProviderTestContextProvider implements Injectab
   private WebHookParameterDataProvider dataProvider;
   private final SBuildServer sBuildServer;
   private final PermissionChecker permissionChecker;
-  private final ProjectManager projectManager;
+  private ProjectManager projectManager;
   private TemplateFinder templateFinder;
   private WebHookPayloadManager payloadManager;
   @Context WebHookTemplateManager templateManager;
@@ -55,13 +55,11 @@ public class WebHookParameterDataProviderTestContextProvider implements Injectab
 	  System.out.println("We are here: Trying to provide a testable DataProvider instance");
 	  sBuildServer = mock(SBuildServer.class);
 	  permissionChecker = mock(PermissionChecker.class);
-	  projectManager = new MockProjectManager();
 	  projectIdResolver = mock(ProjectIdResolver.class);
 	  securityContext = mock(SecurityContextEx.class);
 	  authorityHolder = mock(AuthorityHolder.class);
 	  when(securityContext.getAuthorityHolder()).thenReturn(authorityHolder);
 	  when(authorityHolder.isPermissionGrantedForAnyProject(eq(Permission.EDIT_PROJECT))).thenReturn(true);
-	  //templateFinder = mock(TemplateFinder.class);
   }
 
   public ComponentScope getScope() {
@@ -84,6 +82,7 @@ public class WebHookParameterDataProviderTestContextProvider implements Injectab
 	  webHookManager = ContextLoader.getCurrentWebApplicationContext().getBean(WebHookManager.class);
 	  webHookFinder = ContextLoader.getCurrentWebApplicationContext().getBean(WebHookFinder.class);
 	  webHookParameterFinder = ContextLoader.getCurrentWebApplicationContext().getBean(WebHookParameterFinder.class);
+	  projectManager = ContextLoader.getCurrentWebApplicationContext().getBean(ProjectManager.class);
 	  //projectIdResolver = ContextLoader.getCurrentWebApplicationContext().getBean(ProjectIdResolver.class);
 	  
 	  dataProvider = new WebHookParameterDataProvider(sBuildServer, new TestUrlHolder(), permissionChecker, projectManager, projectIdResolver, webHookParameterFinder, securityContext);

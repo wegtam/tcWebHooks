@@ -18,6 +18,7 @@ import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.auth.Permission;
 import webhook.teamcity.server.rest.data.WebHookParameterValidator;
 import webhook.teamcity.settings.project.WebHookParameterStore;
+import webhook.teamcity.test.springmock.MockProjectManager;
 
 @Provider
 public class WebHookParameterValidatorTestContextProvider implements InjectableProvider<Context, Type>, Injectable<WebHookParameterValidator> {
@@ -30,13 +31,16 @@ public class WebHookParameterValidatorTestContextProvider implements InjectableP
 		SProject sProject = Mockito.mock(SProject.class);
 		SProject testProject = Mockito.mock(SProject.class);
 		Mockito.when(sProject.getProjectId()).thenReturn("project01");
+		Mockito.when(sProject.getProjectId()).thenReturn("project01");
+		Mockito.when(sProject.getExternalId()).thenReturn("_Root");
 		Mockito.when(testProject.getProjectId()).thenReturn("project1");
+		Mockito.when(testProject.getExternalId()).thenReturn("TestProject");
 		WebHookParameterStore webhookParameterStore = Mockito.mock(WebHookParameterStore.class);
 		PermissionChecker permissionChecker = Mockito.mock(PermissionChecker.class);
-		ProjectManager projectManager = Mockito.mock(ProjectManager.class);
-		Mockito.when(projectManager.findProjectByExternalId(Mockito.eq("_Root"))).thenReturn(sProject);
-		Mockito.when(projectManager.findProjectByExternalId(Mockito.eq("TestProject"))).thenReturn(testProject);
-		Mockito.when(projectManager.findProjectById("project01")).thenReturn(sProject);
+		ProjectManager projectManager = new MockProjectManager();
+//		Mockito.when(projectManager.findProjectByExternalId(Mockito.eq("_Root"))).thenReturn(sProject);
+//		Mockito.when(projectManager.findProjectByExternalId(Mockito.eq("TestProject"))).thenReturn(testProject);
+//		Mockito.when(projectManager.findProjectById("project01")).thenReturn(sProject);
 		Mockito.when(permissionChecker.isPermissionGranted(Permission.EDIT_PROJECT, "project01")).thenReturn(true);
 		Mockito.when(permissionChecker.isPermissionGranted(Permission.EDIT_PROJECT, "project1")).thenReturn(true);
 		this.webhookParameterValidator = new WebHookParameterValidator(webhookParameterStore, permissionChecker, projectManager);

@@ -92,13 +92,13 @@ public class WebHookParametersRequest {
 	@Produces({ "application/xml", "application/json" })
 	public ProjectWebhookParameter serveParameter(
 			@PathParam("projectId") String projectExternalId, 
-			@PathParam("parameterLocator") String webhookLocator,
+			@PathParam("parameterLocator") String parameterLocator,
 			@QueryParam("fields") String fields
 		)
 	{
 		SProject sProject = resolveProject(projectExternalId);
 		checkParameterReadPermission(sProject.getProjectId());
-		return this.myDataProvider.getWebHookParameterFinder().findWebhookParameter(sProject, new Fields(fields), myBeanContext);
+		return this.myDataProvider.getWebHookParameterFinder().findWebhookParameter(sProject, parameterLocator, new Fields(fields), myBeanContext);
 	}
 	
 	@POST
@@ -154,18 +154,17 @@ public class WebHookParametersRequest {
 	}
 
 	@DELETE
-	@Path("/{projectId}/{parameterId}")
+	@Path("/{projectId}/{parameterLocator}")
 	@Produces({ "application/xml", "application/json" })
 	public ProjectWebhookParameter deleteParameter(
 			@PathParam("projectId") String projectExternalId, 
-			@PathParam("parameterId") String parameterId, 
-			@QueryParam("fields") String fields,
-			ProjectWebhookParameter updatedParameter
+			@PathParam("parameterLocator") String parameterLocator, 
+			@QueryParam("fields") String fields
 			)
 	{
 		SProject sProject = resolveProject(projectExternalId);
 		checkParameterWritePermission(sProject.getProjectId());
-		ProjectWebhookParameter webhookParameter = this.myDataProvider.getWebHookParameterFinder().findWebhookParameter(sProject, new Fields(fields), myBeanContext);
+		ProjectWebhookParameter webhookParameter = this.myDataProvider.getWebHookParameterFinder().findWebhookParameter(sProject, parameterLocator, new Fields(fields), myBeanContext);
 		this.myWebHookParameterStore.removeWebHookParameter(sProject.getProjectId(), webhookParameter);
 		return webhookParameter;
 	}
