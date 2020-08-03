@@ -3,7 +3,7 @@
         </script>
 
 	    <br/>
-	    <table id="webHookTable" class="settings">
+	    <table id="webHookTable" class="settings webhooktable">
 	   		<thead>
 		   		<tr style="background-color: rgb(245, 245, 245);">
 					<th class="name">URL</th>
@@ -56,6 +56,44 @@
 				</tr>
 			</tfoot>
 		</table>
+
+		<p>
+			<h2>WebHook Parameters in this Project</h2>
+				<table class="highlightable parametersTable webhooktable">
+					<thead>
+						<tr>
+							<th class=name style="font-weight: bold;">Parameter Name</th>
+							<th style="font-weight: bold;">Parameter Value</th>
+							<th style="font-weight: bold; width:15%" colspan=3>Legacy Parameter</th>
+						</tr>
+					</thead>
+					<tbody>
+					<c:forEach items="${projectWebhookParameters}" var="myParam">
+						<tr class="highlight" onclick="WebHooksPlugin.Parameters.editParameter('${myParam.parameter.id}');">
+							<td><c:out value="${myParam.parameter.name}" /></td>
+							<c:choose>
+								<c:when test="${myParam.parameter.secure}">
+									<td>*****</td>
+								</c:when>
+								<c:otherwise>
+									<td><c:out value="${myParam.parameter.value}"/></td>
+								</c:otherwise>
+							</c:choose>
+							<c:choose>
+								<c:when test="${myParam.parameter.includedInLegacyPayloads}">
+									<td style="width:8%">Yes</td>
+								</c:when>
+								<c:otherwise>
+									<td style="width:8%">No</td>
+								</c:otherwise>
+							</c:choose>
+							<td><a onclick="WebHooksPlugin.Parameters.editParameter({'parameterId':'${myParam.parameter.id}','projectId':'${myParam.sproject.externalId}'});" href="javascript://">edit</a></td>
+							<td>delete</td>
+						</tr>
+					</c:forEach>
+					</tbody>
+				</table>
+		<p>
 
     <bs:dialog dialogId="editWebHookDialog"
                dialogClass="editParameterDialog"
@@ -280,6 +318,50 @@
             <div class="popupSaveButtonsBlock">
                 <forms:submit id="deleteWebHookDialogSubmit" label="Delete Web Hook"/>
                 <forms:cancel onclick="WebHooksPlugin.DeleteWebHookDialog.cancelDialog()"/>
+            </div>
+        </forms:multipartForm>
+    </bs:dialog>
+    
+    <bs:dialog dialogId="editWebHookParameterDialog"
+               dialogClass="editWebHookParameterDialog"
+               title="Edit WebHook Parameter"
+               closeCommand="WebHooksPlugin.Parameters.EditDialog.cancelDialog()">
+        <forms:multipartForm id="editWebHookParameterForm"
+                             action="ajaxEdit.html?projectId=${projectId}"
+                             targetIframe="hidden-iframe"
+                             onsubmit="return WebHooksPlugin.Parameters.EditDialog.doPost();">
+
+            <table class="runnerFormTable">
+                <tr><td id="deleteWebHookParameterWarningMessage">Are you sure you want to delete this Webhook?
+                        <div id="ajaxWebHookParameterEditResult"></div>
+                </td></tr>
+            </table>
+            <input type="hidden" id="parameterId" name="parameterId"/>
+            <div class="popupSaveButtonsBlock">
+                <forms:submit id="editWebHookParameterDialogSubmit" label="Edit Parameter"/>
+                <forms:cancel onclick="WebHooksPlugin.Parameters.EditDialog.cancelDialog()"/>
+            </div>
+        </forms:multipartForm>
+    </bs:dialog>
+    
+    <bs:dialog dialogId="deleteWebHookParameterDialog"
+               dialogClass="deleteWebHookParameterDialog"
+               title="Confirm Parameter deletion"
+               closeCommand="WebHooksPlugin.Parameters.DeleteDialog.cancelDialog()">
+        <forms:multipartForm id="deleteWebHookParameterForm"
+                             action="ajaxEdit.html?projectId=${projectId}"
+                             targetIframe="hidden-iframe"
+                             onsubmit="return WebHooksPlugin.DeleteWebHookParameterDialog.doPost();">
+
+            <table class="runnerFormTable">
+                <tr><td id="deleteWebHookParameterWarningMessage">Are you sure you want to delete this Webhook?
+                        <div id="ajaxWebHookParameterDeleteResult"></div>
+                </td></tr>
+            </table>
+            <input type="hidden" id="webHookId" name="webHookId"/>
+            <div class="popupSaveButtonsBlock">
+                <forms:submit id="deleteWebHookParameterDialogSubmit" label="Delete Parameter"/>
+                <forms:cancel onclick="WebHooksPlugin.DeleteWebHookParameterDialog.cancelDialog()"/>
             </div>
         </forms:multipartForm>
     </bs:dialog>

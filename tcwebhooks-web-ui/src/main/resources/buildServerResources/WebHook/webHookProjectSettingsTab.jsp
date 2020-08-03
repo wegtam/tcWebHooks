@@ -65,10 +65,10 @@ ul.commalist li:last-child:after {
 				<table class="highlightable parametersTable">
 					<thead>
 						<tr>
-							<th class=name style="width:40%">URL</th>
-							<th style="width:20%">Format</th>
-							<th style="width:20%">Build Events</th>
-							<th style="width:20%">Enabled Builds</th>
+							<th class=name style="font-weight: bold; width:40%">URL</th>
+							<th style="font-weight: bold; width:20%">Format</th>
+							<th style="font-weight: bold; width:20%">Build Events</th>
+							<th style="font-weight: bold; width:20%">Enabled Builds</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -91,6 +91,43 @@ ul.commalist li:last-child:after {
 				</table>
 		</c:if>
 		
+		<p>
+			<h3>WebHook Parameters available to WebHooks in this Project</h3>
+				<table class="highlightable parametersTable webhooktable">
+					<thead>
+						<tr>
+							<th class=name style="font-weight: bold; width:20%">Parameter Name</th>
+							<th style="font-weight: bold; width:40%">Parameter Value</th>
+							<th style="font-weight: bold; width:15%">Legacy Parameter</th>
+							<th style="font-weight: bold; width:25%">Defined in Project</th>
+						</tr>
+					</thead>
+					<tbody>
+					<c:forEach items="${projectWebhookParameters}" var="myParam">
+						<tr>
+							<td><c:out value="${myParam.parameter.name}" /></td>
+							<c:choose>
+								<c:when test="${myParam.parameter.secure}">
+									<td>*****</td>
+								</c:when>
+								<c:otherwise>
+									<td><c:out value="${myParam.parameter.value}"/></td>
+								</c:otherwise>
+							</c:choose>
+							<c:choose>
+								<c:when test="${myParam.parameter.includedInLegacyPayloads}">
+									<td>Yes</td>
+								</c:when>
+								<c:otherwise>
+									<td>No</td>
+								</c:otherwise>							
+							</c:choose>
+							<td>${myParam.sensibleProjectName}</td>
+							
+						</tr>
+					</c:forEach>
+					</tbody>
+				</table>
 		<p>
 		
 		<c:choose>
