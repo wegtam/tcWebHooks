@@ -29,7 +29,7 @@ public class DeleteWebHookParameterTest extends WebHookAbstractSpringAwareJersey
     	final String rootProjectPath = API_PARAMETERS_URL + "/_Root";
     	
     	WebResource webResource = resource();
-		ProjectWebhookParameters responseMsg = webResource.path(rootProjectPath).accept(MediaType.APPLICATION_JSON_TYPE).get(ProjectWebhookParameters.class);
+		ProjectWebhookParameters responseMsg = webResource.path(rootProjectPath).queryParam("fields","$long").accept(MediaType.APPLICATION_JSON_TYPE).get(ProjectWebhookParameters.class);
     	assertEquals(0, (int)responseMsg.getCount());
     	
     	prettyPrint(responseMsg);
@@ -38,13 +38,13 @@ public class DeleteWebHookParameterTest extends WebHookAbstractSpringAwareJersey
     	newParameter.setName("A test parameter");
 
     	webResource.path(rootProjectPath).accept(MediaType.APPLICATION_JSON_TYPE).post(newParameter);
-    	ProjectWebhookParameters updatedResponse = webResource.path(rootProjectPath).accept(MediaType.APPLICATION_JSON_TYPE).get(ProjectWebhookParameters.class);
+    	ProjectWebhookParameters updatedResponse = webResource.path(rootProjectPath).queryParam("fields","$long").accept(MediaType.APPLICATION_JSON_TYPE).get(ProjectWebhookParameters.class);
     	assertEquals(1, (int)updatedResponse.getCount());
     	prettyPrint(updatedResponse);
 
     	webResource.path(rootProjectPath + "/id:" + updatedResponse.getParameters().get(0).getId()).delete();
     	
-    	updatedResponse = webResource.path(rootProjectPath).accept(MediaType.APPLICATION_JSON_TYPE).get(ProjectWebhookParameters.class);
+    	updatedResponse = webResource.path(rootProjectPath).queryParam("fields","$long").accept(MediaType.APPLICATION_JSON_TYPE).get(ProjectWebhookParameters.class);
     	
     	prettyPrint(updatedResponse);
 

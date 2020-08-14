@@ -1,10 +1,7 @@
 package webhook.teamcity.settings.project;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import jetbrains.buildServer.agent.Constants;
 import jetbrains.buildServer.serverSide.SProjectFeatureDescriptor;
@@ -26,8 +23,15 @@ public class WebHookParameterFactory {
 		
 		WebHookParameter model = new WebHookParameterModel();
 		model.setId(id);
+		model.setSecure(Boolean.valueOf(parameters.get(SECURE_KEY)));
 		model.setName(parameters.get(NAME_KEY));
-		model.setValue(parameters.get(VALUE_KEY));
+		if (Boolean.TRUE.equals(model.getSecure()) && parameters.get(VALUE_KEY).startsWith(SECURE_PROPERTY_PREFIX)) {
+			model.setValue(parameters.get(VALUE_KEY).substring(SECURE_PROPERTY_PREFIX.length()));
+		} else {
+			model.setValue(parameters.get(VALUE_KEY));
+		}
+		model.setIncludedInLegacyPayloads(Boolean.valueOf(parameters.get(LEGACY_PAYLOADS_KEY)));
+		
 		return model;
 	}
 
@@ -35,9 +39,13 @@ public class WebHookParameterFactory {
 		Map<String,String> properties = new HashMap<>();
 		
 		properties.put(NAME_KEY, model.getName());
-		properties.put(VALUE_KEY, model.getValue());
-		properties.put(SECURE_KEY, model.getSecure() != null ? model.getSecure().toString() : "false");
-		properties.put(LEGACY_PAYLOADS_KEY, model.getIncludedInLegacyPayloads() != null ? model.getIncludedInLegacyPayloads().toString() : "false");
+		if (Boolean.TRUE.equals(model.getSecure())) {
+			properties.put(VALUE_KEY, SECURE_PROPERTY_PREFIX + model.getValue());
+		} else {
+			properties.put(VALUE_KEY, model.getValue());
+		}
+		properties.put(SECURE_KEY, Boolean.toString(Boolean.TRUE.equals(model.getSecure())));
+		properties.put(LEGACY_PAYLOADS_KEY, Boolean.toString(Boolean.TRUE.equals(model.getIncludedInLegacyPayloads())));
 		
 		return properties;
 	}

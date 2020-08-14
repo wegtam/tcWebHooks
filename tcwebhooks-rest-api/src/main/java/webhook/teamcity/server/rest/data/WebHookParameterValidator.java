@@ -1,23 +1,13 @@
 package webhook.teamcity.server.rest.data;
 
-import java.util.regex.Pattern;
-
 import jetbrains.buildServer.server.rest.data.PermissionChecker;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.auth.AccessDeniedException;
 import jetbrains.buildServer.serverSide.auth.Permission;
-import webhook.Constants;
-import webhook.teamcity.BuildStateEnum;
-import webhook.teamcity.payload.WebHookPayloadTemplate;
-import webhook.teamcity.payload.WebHookTemplateManager;
-import webhook.teamcity.server.rest.model.template.Template;
-import webhook.teamcity.server.rest.model.template.Template.TemplateItem;
-import webhook.teamcity.server.rest.model.template.Template.WebHookTemplateStateRest;
-import webhook.teamcity.settings.project.WebHookParameter;
-import webhook.teamcity.settings.project.WebHookParameterStore;
 import webhook.teamcity.server.rest.model.parameter.ProjectWebhookParameter;
 import webhook.teamcity.server.rest.model.template.ErrorResult;
+import webhook.teamcity.settings.project.WebHookParameterStore;
 
 public class WebHookParameterValidator {
 	private static final String PROJECT_ID_KEY = "projectId";
@@ -53,6 +43,14 @@ public class WebHookParameterValidator {
 		
 		if (updatedParameter.getName() == null || updatedParameter.getName().trim().isEmpty()) {
 			result.addError("format", "The parameter name cannot be empty.");
+		}
+		
+		if (updatedParameter.getSecure() == null) {
+			result.addError("secure", "The 'secure' flag cannot be empty and must be 'true' or 'false'.");
+		}
+		
+		if (updatedParameter.getIncludedInLegacyPayloads() == null) {
+			result.addError("includedInLegacyPayloads", "The 'includedInLegacyPayloads' flag cannot be empty and must be 'true' or 'false'.");
 		}
 		
 		validateProjectId(externalId, result);

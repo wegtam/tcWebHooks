@@ -30,10 +30,10 @@ public class ProjectWebhookParameter implements WebHookParameter {
 	@XmlElement
 	private String value;
 	
-	@XmlAttribute
+	@XmlElement
 	private Boolean secure;
 	
-	@XmlAttribute
+	@XmlElement
 	private Boolean includedInLegacyPayloads;
 	
 	@XmlAttribute
@@ -41,10 +41,16 @@ public class ProjectWebhookParameter implements WebHookParameter {
 	
 	public ProjectWebhookParameter(WebHookParameter parameter, String projectExternalId, Fields fields, BeanContext beanContext) {
 		this.id = ValueWithDefault.decideDefault(fields.isIncluded("id", true, true), parameter.getId());
-		this.name = ValueWithDefault.decideDefault(fields.isIncluded("name", false, true), parameter.getName());
+		this.name = ValueWithDefault.decideDefault(fields.isIncluded("name", true, true), parameter.getName());
 		this.value = ValueWithDefault.decideDefault(fields.isIncluded("value", false, true), parameter.getValue());
-		this.secure = ValueWithDefault.decideDefault(fields.isIncluded("secure", false, true), parameter.getSecure());
-		this.includedInLegacyPayloads = ValueWithDefault.decideDefault(fields.isIncluded("includedInLegacyPayloads", false, true), parameter.getIncludedInLegacyPayloads());
+		this.secure = ValueWithDefault.decideDefault(
+				fields.isIncluded("secure"), 
+				Boolean.TRUE.equals(parameter.getSecure()) // true if defined and true, else false
+			);
+		this.includedInLegacyPayloads = ValueWithDefault.decideDefault(
+				fields.isIncluded("includedInLegacyPayloads", false, true), 
+				Boolean.TRUE.equals(parameter.getIncludedInLegacyPayloads()) // true if defined and true, else false
+			);
 		href = ValueWithDefault.decideDefault(fields.isIncluded("href"), beanContext.getApiUrlBuilder().getHref(projectExternalId, parameter));
 
 	}
