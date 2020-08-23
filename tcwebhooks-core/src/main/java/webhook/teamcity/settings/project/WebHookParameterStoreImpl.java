@@ -70,7 +70,7 @@ public class WebHookParameterStoreImpl implements WebHookParameterStore {
     	if (project == null) {
     		return false;
     	}
-		SProjectFeatureDescriptor feature = filterFeatureDescriptors(project.getOwnFeaturesOfType(PROJECT_FEATURE_TYPE), webhookParameter.getName());
+		SProjectFeatureDescriptor feature = project.findFeatureById(webhookParameter.getId());
 		if (feature == null) {
 			Loggers.SERVER.warn("WebHookParameterStoreImpl :: Unable to find existing WebHookParameter instance "
 					+ " to update with ID: " + webhookParameter.getName());

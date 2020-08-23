@@ -142,12 +142,20 @@ public class WebHookParametersRequest {
 		if (validationResult.isErrored()) {
 			throw new UnprocessableEntityException(PARAMETER_CONTAINED_INVALID_DATA, validationResult);
 		}
-		WebHookParameter existingParameter = this.myDataProvider.getWebHookParameterFinder().findWebhookParameterById(sProject, parameterId); 
+		WebHookParameter existingParameter = this.myDataProvider.getWebHookParameterFinder().findWebhookParameter(sProject, parameterId, new Fields(fields), myBeanContext); 
 		if (existingParameter == null) {
 			throw new NotFoundException("No Parameter with that ID exists in this project");
 		}
+		
+		updatedParameter.setId(existingParameter.getId());
+		WebHookParameter webHookParameterByName = myWebHookParameterStore.findWebHookParameter(sProject, updatedParameter.getName());
+		if (webHookParameterByName != null && !webHookParameterByName.getId().equals(updatedParameter.getId())) {
+			validationResult.addError("name", String.format("An existing parameter with id '%s' exists with the same name '%s'", webHookParameterByName.getId(), webHookParameterByName.getName()));
+			throw new UnprocessableEntityException(PARAMETER_CONTAINED_INVALID_DATA, validationResult);
+		}
+		
 		if (myWebHookParameterStore.updateWebHookParameter(sProject.getProjectId(), updatedParameter, "")) {
-			return new ProjectWebhookParameter(myWebHookParameterStore.getWebHookParameterById(sProject, parameterId), projectExternalId, new Fields(fields), myBeanContext);
+			return new ProjectWebhookParameter(myWebHookParameterStore.getWebHookParameterById(sProject, existingParameter.getId()), projectExternalId, new Fields(fields), myBeanContext);
 		} else {
 			throw new OperationException("An error occured updating the prarameter");
 		}

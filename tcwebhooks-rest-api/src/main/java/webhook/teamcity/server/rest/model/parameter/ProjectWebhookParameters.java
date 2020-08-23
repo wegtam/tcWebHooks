@@ -60,9 +60,8 @@ public class ProjectWebhookParameters {
 					new ValueWithDefault.Value<List<ProjectWebhookParameter>>() {
 						public List<ProjectWebhookParameter> get() {
 							final ArrayList<ProjectWebhookParameter> result = new ArrayList<>(parameters.size());
-							final Fields nestedField = new Fields("id,name,value,status,href,webUrl");
 							for (WebHookParameter parameter : webhookParameters) {
-								result.add(new ProjectWebhookParameter(parameter, projectExternalId, nestedField, beanContext));
+								result.add(new ProjectWebhookParameter(parameter, projectExternalId, fields, beanContext));
 							}
 							return result;
 						}

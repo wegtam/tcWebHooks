@@ -44,11 +44,11 @@ public class ProjectWebhookParameter implements WebHookParameter {
 		this.name = ValueWithDefault.decideDefault(fields.isIncluded("name", true, true), parameter.getName());
 		this.value = ValueWithDefault.decideDefault(fields.isIncluded("value", false, true), parameter.getValue());
 		this.secure = ValueWithDefault.decideDefault(
-				fields.isIncluded("secure"), 
+				fields.isIncluded("secure", false, true),
 				Boolean.TRUE.equals(parameter.getSecure()) // true if defined and true, else false
 			);
 		this.includedInLegacyPayloads = ValueWithDefault.decideDefault(
-				fields.isIncluded("includedInLegacyPayloads", false, true), 
+				fields.isIncluded("includedInLegacyPayloads", false, true),
 				Boolean.TRUE.equals(parameter.getIncludedInLegacyPayloads()) // true if defined and true, else false
 			);
 		href = ValueWithDefault.decideDefault(fields.isIncluded("href"), beanContext.getApiUrlBuilder().getHref(projectExternalId, parameter));

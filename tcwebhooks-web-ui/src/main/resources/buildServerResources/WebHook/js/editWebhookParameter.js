@@ -23,59 +23,21 @@ WebHooksPlugin.Parameters = {
     	if (!restApiDetected) {
     		WebHooksPlugin.NoRestApiDialog.showDialog();
     	} else {
-    		WebHooksPlugin.Parameters.EditDialog.showDialog("Edit WebHook Parameter", 'editWebhook', data);
+    		WebHooksPlugin.Parameters.EditDialog.showDialog("Edit WebHook Parameter", 'editWebhookParameter', data);
     	}
     },
     addParameter: function(data) {
     	if (!restApiDetected) {
     		WebHooksPlugin.NoRestApiDialog.showDialog();
     	} else {
-    		WebHooksPlugin.TemplateEditBuildEventDialog.showDialogAddEventTemplate("Add Build Event Template", 'addBuildEventTemplate', data);
+    		WebHooksPlugin.Parameters.EditDialog.showDialog("Add WebHook Parameter", 'addWebhookParameter', data);
     	}
     },
-    createDefaultTemplate: function(data) {
+    deleteParameter: function(data) {
     	if (!restApiDetected) {
     		WebHooksPlugin.NoRestApiDialog.showDialog();
     	} else {
-    		WebHooksPlugin.TemplateEditBuildEventDialog.showDialogCreateDefaultTemplate("Add Default Template", 'addDefaultTemplate', data);
-    	}
-    },
-    editTemplateDetails: function(data) {
-    	if (!restApiDetected) {
-    		WebHooksPlugin.NoRestApiDialog.showDialog();
-    	} else {
-    		WebHooksPlugin.EditTemplateDialog.showDialog("Edit Template", 'editTemplate', data);
-    	}
-    },
-    copyTemplate: function(data) {
-    	if (!restApiDetected) {
-    		WebHooksPlugin.NoRestApiDialog.showDialog();
-    	} else {
-    		WebHooksPlugin.EditTemplateDialog.showDialog("Copy Template", 'copyTemplate', data);
-    	}
-    },
-    exportTemplate: function(templateId) {
-    	if (!restApiDetected) {
-    		WebHooksPlugin.NoRestApiDialog.showDialog();
-    	} else {
-    		WebHooksPlugin.ExportTemplateDialog.showDialog("Export Template", 'exportTemplate', templateId);
-    	}
-    },
-    disableTemplate: function(data) {
-    	alert("This is not implemented yet.");
-    },
-    deleteBuildEventTemplate: function(data) {
-    	if (!restApiDetected) {
-    		WebHooksPlugin.NoRestApiDialog.showDialog();
-    	} else {
-    		WebHooksPlugin.DeleteTemplateItemDialog.showDialog("Delete Build Event Template", 'deleteBuildEventTemplate', data);
-    	}
-    },
-    deleteTemplate: function(data) {
-    	if (!restApiDetected) {
-    		WebHooksPlugin.NoRestApiDialog.showDialog();
-    	} else {
-    		WebHooksPlugin.DeleteTemplateDialog.showDialog("Delete Template", 'deleteTemplate', data);
+    		WebHooksPlugin.Parameters.DeleteDialog.showDialog("Delete WebHook Parameter", 'deleteWebhookParameter', data);
     	}
     },
     EditDialog: OO.extend(BS.AbstractWebForm, OO.extend(BS.AbstractModalDialog, {
@@ -89,15 +51,22 @@ WebHooksPlugin.Parameters = {
 
         showDialog: function (title, action, data) {
 
+            $j("input[id='parameterProjectId']").val(data.projectId);
             $j("input[id='WebHookParameteraction']").val(action);
             $j(".dialogTitle").text(title);
+            $j("#editWebHookParameterDialogSubmit").val(action === "addWebhookParameter" ? "Add Parameter" : "Edit Parameter");
             this.resetAndShow(data);
             this.getWebHookParameterData(data.projectId, data.parameterId, action);
-
+			$j("#viewRow_" + data.parameterId).animate({
+	            backgroundColor: "#ffffcc"
+	    	}, 1000 );
         },
         
         cancelDialog: function () {
         	this.close();
+	        $j("#viewRow_" + $j("#editWebHookParameterForm input[id='parameterId']").val()).animate({
+	            backgroundColor: "#ffffff"
+	        }, 500 );
         },
 
         resetAndShow: function (data) {
@@ -107,7 +76,12 @@ WebHooksPlugin.Parameters = {
         },
 
         cleanFields: function (data) {
-            this.cleanErrors();
+        	$j("#editWebHookParameterForm input[class='editWebHookParameterFormField']").val("");
+        	$j("#editWebHookParameterForm")[0].reset();
+        	$j("#editWebHookParameterForm #parameterId").val(data.parameterId);
+        	$j("#editWebHookParameterForm #parameterProjectId").val(data.projectId);
+        	this.toggleHidden();
+        	this.cleanErrors();
         },
 
         cleanErrors: function () {
@@ -132,16 +106,20 @@ WebHooksPlugin.Parameters = {
         	}
         },
 
-		getWebHookParameterData: function (templateId, buildTemplateId, action) {
-			this.getParameterData(templateId, buildTemplateId, action);
+		getWebHookParameterData: function (projectId, parameterId, action) {
+			if (action === 'addWebhookParameter') {
+				WebHooksPlugin.Parameters.localStore.myJson = { "id": "_new", "projectId": projectId};
+			} else {
+				this.getParameterData(projectId, parameterId, action);
+			}
 		},
 		putWebHookParameterData: function () {
 			this.updateJsonDataFromForm();
-			this.putTemplateData();
+			this.putParameterData();
 		},
 		postWebHookParameterData: function () {
 			this.updateJsonDataFromForm();
-			this.postTemplateData();
+			this.postParameterData();
 		},
 		disableAndClearCheckboxes: function () {
 			$j("#editWebHookParameterForm input.buildState").prop("disabled", true).prop( "checked", false);
@@ -155,13 +133,15 @@ WebHooksPlugin.Parameters = {
 			$j("#editWebHookParameterForm input.buildState").prop("disabled", false);
 		},
 		updateJsonDataFromForm: function () {
-			WebHooksPlugin.Parameters.localStore.myJson.templateText.content = editor.getValue();
-			WebHooksPlugin.Parameters.localStore.myJson.templateText.useTemplateTextForBranch = $j("#editWebHookParameterForm input#useTemplateTextForBranch").is(':checked');
-			WebHooksPlugin.Parameters.localStore.myJson.branchTemplateText.content = editorBranch.getValue();
-
-    		$j(WebHooksPlugin.Parameters.localStore.myJson.buildState).each(function() {
-    			this.enabled = $j("#editTemplateItemForm input[id='" + this.type + "']").prop( "checked");
-    		});
+			var myJson = {};
+			myJson.id = $j('#editWebHookParameterForm #parameterId').val();
+			myJson.projectId = $j('#editWebHookParameterForm #parameterProjectId').val();
+			myJson.href = $j('#editWebHookParameterForm #parameterHref').val();
+			myJson.secure = $j("#editWebHookParameterForm #parameterDialogType").val() === "password";
+			myJson.name = $j("#editWebHookParameterForm #parameterDialogTypeName").val();
+			myJson.value = $j("#editWebHookParameterForm #parameterDialogTypeValue").val();
+			myJson.includedInLegacyPayloads = $j("#editWebHookParameterForm #parameterDialogVisibility").val() === "legacy";
+			WebHooksPlugin.Parameters.localStore.myJson = myJson;
 		},
 		getParameterData: function (projectId, parameterId, action) {
 			var dialog = this;
@@ -182,8 +162,30 @@ WebHooksPlugin.Parameters = {
     		});
 		},
 
+		toggleHidden: function () {
+			var type = $j("#editWebHookParameterForm #parameterDialogType").val();
+		    switch (type) {
+		        case 'password':
+		        {
+		            $j("#editWebHookParameterForm #parameterDialogTypeValue").attr('type', 'password');
+		            return;
+		        }
+		        case 'text':
+		        {
+		            $j("#editWebHookParameterForm #parameterDialogTypeValue").attr('type', 'text');
+		            return;
+		        }
+		    }
+		},
 		handleGetSuccess: function (action) {
-			this.updateCheckboxes(action);
+			var myJson = WebHooksPlugin.Parameters.localStore.myJson;
+			$j('#editWebHookParameterForm #parameterId').val(myJson.id);
+			$j('#editWebHookParameterForm #parameterHref').val(myJson.href);
+			$j("#editWebHookParameterForm #parameterDialogType").val(myJson.secure ? "password" : "text");
+			$j("#editWebHookParameterForm #parameterDialogTypeName").val(myJson.name);
+			$j("#editWebHookParameterForm #parameterDialogTypeValue").val(myJson.value);
+			$j("#editWebHookParameterForm #parameterDialogVisibility").val(myJson.includedInLegacyPayloads ? "legacy" : "template");
+			this.toggleHidden();
 		},
 		putParameterData: function () {
 			var dialog = this;
@@ -198,7 +200,13 @@ WebHooksPlugin.Parameters = {
 				},
 				success: function (response) {
 					dialog.close();
-					$("buildEventTemplatesContainer").refresh();
+					$("projectWebhookParametersContainer").refresh(function() {
+			            $j("#viewRow_" + response.id)
+			            .css({backgroundColor: '#cceecc'})
+			            .animate({
+			                backgroundColor: "#ffffff"
+			            }, 1500 );
+					});
 				},
 				error: function (response) {
 					console.log(response);
@@ -208,12 +216,10 @@ WebHooksPlugin.Parameters = {
 		},
 		postParameterData: function () {
 			var dialog = this;
-			var templateSubUri = "/templateItem";
-			if ($j("input[id='WebhookTemplateaction']").val() === "addDefaultTemplate") {
-				templateSubUri = "/defaultTemplate";
-			}
+			// For creating, the ID must be empty
+			WebHooksPlugin.Parameters.localStore.myJson.id = "";
 			$j.ajax ({
-				url: window['base_uri'] + WebHooksPlugin.Parameters.localStore.myJson.parentTemplate.href + templateSubUri,
+				url: window['base_uri'] + '/app/rest/webhooks/parameters/' + WebHooksPlugin.Parameters.localStore.myJson.projectId,
 				type: "POST",
 				data: JSON.stringify(WebHooksPlugin.Parameters.localStore.myJson),
 				dataType: 'json',
@@ -222,8 +228,15 @@ WebHooksPlugin.Parameters = {
 					'Accept' : 'application/json'
 				},
 				success: function (response) {
+					console.log(response);
 					dialog.close();
-					$("buildEventTemplatesContainer").refresh();
+					$("projectWebhookParametersContainer").refresh(function() {
+			            $j("#viewRow_" + response.id)
+			            .css({backgroundColor: '#cceecc'})
+			            .animate({
+			                backgroundColor: "#ffffff"
+			            }, 2500 );
+					});
 				},
 				error: function (response) {
 					console.log(response);
@@ -233,51 +246,8 @@ WebHooksPlugin.Parameters = {
 		},
 		handlePutSuccess: function () {
 			$j("#templateHeading").text(WebHooksPlugin.Parameters.localStore.myJson.parentTemplateDescription);
-			this.updateCheckboxes();
 			this.updateEditor();
 		},
-		updateCheckboxes: function (action) {
-
-        	if (action === 'copyBuildEventTemplate' || action === 'addBuildEventTemplate') {
-        		if (WebHooksPlugin.Parameters.localStore.myJson.id == 'defaultTemplate') {
-            		$j(WebHooksPlugin.Parameters.localStore.myJson.buildState).each(function() {
-            			$j("#editTemplateItemForm input[id='" + this.type + "']").prop( "checked", false).prop( "disabled", ! this.enabled);
-            			if (this.enabled) {
-            				$j("#editTemplateItemForm td[class='" + this.type + "'] label").removeClass("checkboxLooksDisabled");
-            			}
-            		});
-        		} else {
-            		$j(WebHooksPlugin.Parameters.localStore.myJson.buildState).each(function() {
-            			$j("#editTemplateItemForm input[id='" + this.type + "']").prop( "checked", false).prop( "disabled", ! this.editable && ! this.enabled);
-            			if (this.editable && ! this.enabled) {
-            				$j("#editTemplateItemForm td[class='" + this.type + "'] label").removeClass("checkboxLooksDisabled");
-            			}
-            		});
-        		}
-        		WebHooksPlugin.Parameters.localStore.myJson.id = '_new';
-        	} else {
-	    		$j(WebHooksPlugin.Parameters.localStore.myJson.buildState).each(function() {
-	    			if (action === 'addDefaultTemplate') {
-	    				$j("#editTemplateItemForm input[id='" + this.type + "']").prop( "checked", this.editable).prop( "disabled", true);
-	    			} else {
-		    			$j("#editTemplateItemForm input[id='" + this.type + "']").prop( "checked", this.enabled).prop( "disabled", ! this.editable);
-		    			if (this.editable) {
-		    				$j("#editTemplateItemForm td[class='" + this.type + "'] label").removeClass("checkboxLooksDisabled");
-		    			}
-	    			}
-	    		});
-        	}
-
-        	if (action === 'addDefaultTemplate' || action === 'addBuildEventTemplate') {
-	    		$j("#editTemplateItemForm input[id='useTemplateTextForBranch']").prop( "checked", false).prop( "disabled", false);
-				$j("label.useTemplateTextForBranch").removeClass("checkboxLooksDisabled");
-				WebHooksPlugin.Parameters.localStore.myJson.id = '_new';
-        	} else {
-	    		$j("#editTemplateItemForm input[id='useTemplateTextForBranch']").prop( "checked", WebHooksPlugin.Parameters.localStore.myJson.templateText.useTemplateTextForBranch).prop( "disabled", false);
-				$j("label.useTemplateTextForBranch").removeClass("checkboxLooksDisabled");
-			}
-		},
-
 		doPost: function() {
 			if (WebHooksPlugin.Parameters.localStore.myJson.id == '_new' || WebHooksPlugin.Parameters.localStore.myJson.id == '_copy') {
 				this.postWebHookParameterData();
@@ -303,25 +273,38 @@ WebHooksPlugin.Parameters = {
     	}
 
     })),
-    DeleteTemplateItemDialog: OO.extend(BS.AbstractWebForm, OO.extend(BS.AbstractModalDialog, {
+    DeleteDialog: OO.extend(BS.AbstractWebForm, OO.extend(BS.AbstractModalDialog, {
     	getContainer: function () {
-    		return $('deleteTemplateItemDialog');
+    		return $('deleteWebHookParameterDialog');
     	},
 
     	formElement: function () {
-    		return $('deleteTemplateItemForm');
+    		return $('deleteWebHookParameterForm');
     	},
 
     	showDialog: function (title, action, data) {
-    		$j("input[id='WebHookParameteraction']").val(action);
+    		$j("#deleteWebHookParameterForm input[id='WebHookParameteraction']").val(action);
     		$j(".dialogTitle").text(title);
     		this.cleanFields(data);
     		this.cleanErrors();
     		this.showCentered();
+			$j("#viewRow_" + data.parameterId).animate({
+	            backgroundColor: "#ffffcc"
+	    	}, 1000 );
     	},
 
+        cancelDialog: function () {
+        	this.close();
+	        $j("#viewRow_" + $j("#deleteWebHookParameterForm input[id='parameterId']").val()).animate({
+	            backgroundColor: "#ffffff"
+	        }, 500 );
+        },
+        
     	cleanFields: function (data) {
-    		$j("#deleteWebHookParameterForm input[id='parameterId']").val(data.templateId);
+    		$j("#deleteWebHookParameterForm input[id='projectId']").val(data.projectId);
+    		$j("#deleteWebHookParameterForm input[id='parameterId']").val(data.parameterId);
+    		$j("#deleteWebHookParameterForm #confirmationWebHookParameterName").text(data.parameterName);
+    		
     		this.cleanErrors();
     	},
 
@@ -351,11 +334,11 @@ WebHooksPlugin.Parameters = {
     		this.cleanErrors();
 
 			var dialog = this;
-			var templateId = $j("#deleteTemplateItemForm input[id='templateId']").val()
-			var templateNumber = $j("#deleteTemplateItemForm input[id='templateNumber']").val()
+			var parameterId = $j("#deleteWebHookParameterForm input[id='parameterId']").val()
+			var projectId = $j("#deleteWebHookParameterForm input[id='projectId']").val()
 
 			$j.ajax ({
-				url: window['base_uri'] + '/app/rest/webhooks/templates/id:' + templateId + '/templateItems/' + templateNumber,
+				url: window['base_uri'] + '/app/rest/webhooks/parameters/' + projectId + '/id:' + parameterId,
 				type: "DELETE",
 				headers : {
 					'Content-Type' : 'application/json',
@@ -363,7 +346,17 @@ WebHooksPlugin.Parameters = {
 				},
 				success: function (response) {
 					dialog.close();
-					$("buildEventTemplatesContainer").refresh();
+					// Animate the removal of the webhook parameter table row.
+					// Then do the div refresh after the row is gone.
+			        $j("#viewRow_" + response.id)
+			            .children('td, th')
+			            .animate({ backgroundColor: "#ffffff", colour: "#ffffff", paddingTop: 0, paddingBottom: 0 })
+			            .wrapInner('<div />')	// Wrap the content in a div, so that the height can be animated.
+			            .children()
+			            .slideUp(function() {
+			            	$j(this).closest('tr').remove();
+			            	$("projectWebhookParametersContainer").refresh();
+			            });
 				},
 				error: function (response) {
 					WebHooksPlugin.handleAjaxError(dialog, response);

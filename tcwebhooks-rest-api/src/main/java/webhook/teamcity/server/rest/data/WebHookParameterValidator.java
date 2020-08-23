@@ -54,7 +54,7 @@ public class WebHookParameterValidator {
 		}
 		
 		validateProjectId(externalId, result);
-		validateParameterIdExistsInProject(externalId, updatedParameter, result);
+		//validateParameterIdExistsInProject(externalId, updatedParameter, result);
 		
 		return result;
 	}
