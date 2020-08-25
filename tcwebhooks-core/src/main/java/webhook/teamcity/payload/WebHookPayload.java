@@ -1,7 +1,6 @@
 package webhook.teamcity.payload;
 
 import java.util.Map;
-import java.util.SortedMap;
 
 import jetbrains.buildServer.messages.Status;
 import jetbrains.buildServer.serverSide.SBuild;

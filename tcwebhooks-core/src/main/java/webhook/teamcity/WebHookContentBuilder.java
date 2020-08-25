@@ -62,7 +62,7 @@ public class WebHookContentBuilder {
 		
 		if (state.equals(BuildStateEnum.BUILD_ADDED_TO_QUEUE) ){
 			wh.setEnabledForBuildState(state, overrideIsEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(state)));
-			if (wh.isEnabled()){
+			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				wh.setPayload(payloadFormat.buildAddedToQueue(sBuild, mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), templateForThisBuild));
 				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, whc.getUrl(), state, sBuild, payloadFormat, mergeParameters(whc.getParams(),sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), user, comment));
@@ -71,7 +71,7 @@ public class WebHookContentBuilder {
 			}
 		} else if (state.equals(BuildStateEnum.BUILD_REMOVED_FROM_QUEUE) ){
 			wh.setEnabledForBuildState(state, overrideIsEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(state)));
-			if (wh.isEnabled()){
+			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				wh.setPayload(payloadFormat.buildRemovedFromQueue(sBuild, mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), templateForThisBuild, user, comment));
 				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, whc.getUrl(), state, sBuild, payloadFormat, mergeParameters(whc.getParams(),sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), user, comment));
@@ -93,7 +93,7 @@ public class WebHookContentBuilder {
 		
 		if (state.equals(BuildStateEnum.BUILD_STARTED)){
 			wh.setEnabledForBuildState(BuildStateEnum.BUILD_STARTED, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(BuildStateEnum.BUILD_STARTED)));
-			if (wh.isEnabled()){
+			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildStarted(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
@@ -105,7 +105,7 @@ public class WebHookContentBuilder {
 			}
 		} else if (state.equals(BuildStateEnum.CHANGES_LOADED)){
 			wh.setEnabledForBuildState(BuildStateEnum.CHANGES_LOADED, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(BuildStateEnum.CHANGES_LOADED)));
-			if (wh.isEnabled()){
+			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.changesLoaded(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
@@ -117,7 +117,7 @@ public class WebHookContentBuilder {
 			}
 		} else if (state.equals(BuildStateEnum.BUILD_INTERRUPTED)){
 			wh.setEnabledForBuildState(BuildStateEnum.BUILD_INTERRUPTED, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(BuildStateEnum.BUILD_INTERRUPTED)));
-			if (wh.isEnabled()){
+			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildInterrupted(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
@@ -129,7 +129,7 @@ public class WebHookContentBuilder {
 			}
 		} else if (state.equals(BuildStateEnum.BEFORE_BUILD_FINISHED)){
 			wh.setEnabledForBuildState(BuildStateEnum.BEFORE_BUILD_FINISHED, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(BuildStateEnum.BEFORE_BUILD_FINISHED)));
-			if (wh.isEnabled()){
+			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.beforeBuildFinish(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
@@ -145,7 +145,7 @@ public class WebHookContentBuilder {
 					sBuild.getStatusDescriptor().isSuccessful(),
 					hasBuildChangedHistoricalState(sBuild, getPreviousNonPersonalBuild(wh, sBuild)))));
 			
-			if (wh.isEnabled()){
+			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, BuildState.getEffectiveState(state, sBuild.getStatusDescriptor().isSuccessful(), this.hasBuildChangedHistoricalState(sBuild,getPreviousNonPersonalBuild(wh, sBuild))), whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildFinished(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
@@ -157,7 +157,7 @@ public class WebHookContentBuilder {
 			}
 		} else if (state.equals(BuildStateEnum.BUILD_PINNED)) {
 			wh.setEnabledForBuildState(state, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(state)));
-			if (wh.isEnabled()){
+			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildPinned(sBuild, extraParameters, whc.getEnabledTemplates(), templateForThisBuild, username, comment));
@@ -169,7 +169,7 @@ public class WebHookContentBuilder {
 			}
 		} else if (state.equals(BuildStateEnum.BUILD_UNPINNED)) {
 			wh.setEnabledForBuildState(state, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(state)));
-			if (wh.isEnabled()){
+			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildUnpinned(sBuild, extraParameters, whc.getEnabledTemplates(), templateForThisBuild, username, comment));
@@ -193,7 +193,7 @@ public class WebHookContentBuilder {
 		wh.setVariableResolverFactory(variableResolverFactory);
 		
 		wh.setEnabledForBuildState(BuildStateEnum.RESPONSIBILITY_CHANGED, isOverrideEnabled || wh.getBuildStates().enabled(BuildStateEnum.RESPONSIBILITY_CHANGED));
-		if (wh.isEnabled()){
+		if (Boolean.TRUE.equals(wh.isEnabled())){
 			templateForThisBuild = findTemplateForState(responsibilityHolder.getSProject(), state, whc.getPayloadTemplate());
 			ExtraParameters extraParameters = mergeParameters(whc.getParams(), responsibilityHolder.getSProject(), null, getPreferredDateFormat(templateForThisBuild));
 			wh.setPayload(payloadFormat.responsibilityChanged(responsibilityHolder, extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
