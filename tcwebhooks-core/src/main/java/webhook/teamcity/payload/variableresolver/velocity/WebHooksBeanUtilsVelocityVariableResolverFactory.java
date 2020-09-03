@@ -53,9 +53,9 @@ public class WebHooksBeanUtilsVelocityVariableResolverFactory implements Variabl
 	}
 
 	@Override
-	public VariableMessageBuilder createVariableMessageBuilder(String template, VariableResolver resolver) {
+	public VariableMessageBuilder createVariableMessageBuilder(VariableResolver resolver) {
 		if (resolver instanceof WebHooksBeanUtilsVelocityVariableResolver) {
-			return WebHookVelocityVariableMessageBuilder.create(template, (Context)resolver, webHookSecretResolver);
+			return WebHookVelocityVariableMessageBuilder.create((Context)resolver, webHookSecretResolver);
 		} 
 		throw new WebHookContentResolutionException("Incompatible VariableResolver. It must implement Velocity Context");
 	}

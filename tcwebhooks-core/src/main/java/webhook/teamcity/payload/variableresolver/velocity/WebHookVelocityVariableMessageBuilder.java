@@ -12,12 +12,11 @@ import webhook.teamcity.settings.secure.WebHookSecretResolver;
 public class WebHookVelocityVariableMessageBuilder implements VariableMessageBuilder {
 
 	private static final String PACKAGE = "webhook.teamcity.payload.variableresolver.velocity.";
-	String template;
 	Context resolver;
 	StringWriter sw;
 	VelocityEngine ve ;
 	
-	public static WebHookVelocityVariableMessageBuilder create(final String template, Context resolver, WebHookSecretResolver webHookSecretResolver){
+	public static WebHookVelocityVariableMessageBuilder create(Context resolver, WebHookSecretResolver webHookSecretResolver){
 		WebHookVelocityVariableMessageBuilder builder = new WebHookVelocityVariableMessageBuilder();
 		builder.ve = new VelocityEngine();
 		
@@ -39,14 +38,19 @@ public class WebHookVelocityVariableMessageBuilder implements VariableMessageBui
 	    
 		builder.ve.init();
 		builder.sw =  new StringWriter();
-		builder.template = template;
 		builder.resolver = resolver;
 		return builder;
 	}
 
-	public String build(){
-	    
-	    this.ve.evaluate(resolver, sw, "WebHookVelocityVariableMessageBuilder", template);
-	    return sw.toString();
+	@Override
+	public String build(String template) {
+		this.ve.evaluate(resolver, sw, "WebHookVelocityVariableMessageBuilder", template);
+		return sw.toString();
+	}
+
+	@Override
+	public String build() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

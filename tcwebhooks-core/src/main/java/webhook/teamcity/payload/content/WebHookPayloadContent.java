@@ -3,7 +3,6 @@ package webhook.teamcity.payload.content;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -771,12 +770,11 @@ public class WebHookPayloadContent {
 		private void setBuildStatusHtml(VariableResolverFactory variableResolverFactory, final String htmlStatusTemplate) {
 			
 			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(
-						htmlStatusTemplate, 
 						variableResolverFactory.buildVariableResolver(
 									this.getProject(), new SimpleSerialiser(), this, getAllParameters()
 								)
 					);
-			this.buildStatusHtml = builder.build();
+			this.buildStatusHtml = builder.build(htmlStatusTemplate);
 		}
 		
 		public String getBuildStartTime() {
@@ -860,14 +858,14 @@ public class WebHookPayloadContent {
 				VariableResolver resolver = variableResolverFactory.buildVariableResolver(getProject(), new SimpleSerialiser(), this, getAllParameters());
 				ExtraParameters resolvedParametersMap = new ExtraParameters();
 
+				builder = variableResolverFactory.createVariableMessageBuilder(resolver);
 				for (Entry<String,String> entry  : extraParameters.getEntriesAsSet()){
-					builder = variableResolverFactory.createVariableMessageBuilder(entry.getValue(), resolver);
-					resolvedParametersMap.put(entry.getKey(), builder.build());
+					resolvedParametersMap.put(entry.getKey(), builder.build(entry.getValue()));
 				}
 				resolver = new WebHooksBeanUtilsVariableResolver(getProject(), new SimpleSerialiser(),this, getAllParameters(), null);
+				builder = variableResolverFactory.createVariableMessageBuilder(resolver);
 				for (Entry<String,String> entry  : extraParameters.getEntriesAsSet()){
-					builder = variableResolverFactory.createVariableMessageBuilder(entry.getValue(), resolver);
-					resolvedParametersMap.put(entry.getKey(), builder.build());
+					resolvedParametersMap.put(entry.getKey(), builder.build(entry.getValue()));
 				}
 				return resolvedParametersMap;
 			} else {

@@ -50,8 +50,8 @@ public class WebHooksBeanUtilsVariableResolverFactory implements VariableResolve
 	}
 
 	@Override
-	public VariableMessageBuilder createVariableMessageBuilder(String template, VariableResolver resolver) {
-		return WebHookVariableMessageBuilder.create(template, resolver);
+	public VariableMessageBuilder createVariableMessageBuilder(VariableResolver resolver) {
+		return WebHookVariableMessageBuilder.create(resolver);
 	}
 
 }

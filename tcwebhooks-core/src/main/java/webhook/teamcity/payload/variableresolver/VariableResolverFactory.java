@@ -13,7 +13,7 @@ public interface VariableResolverFactory {
 	public abstract void setWebHookSecretResolverFactory(WebHookSecretResolverFactory webHookSecretResolverFactory);
 	public abstract PayloadTemplateEngineType getPayloadTemplateType();
 	public abstract String getVariableResolverFactoryName();
-	public abstract VariableMessageBuilder createVariableMessageBuilder(final String template, VariableResolver resolver);
+	public abstract VariableMessageBuilder createVariableMessageBuilder(VariableResolver resolver);
 	public abstract VariableResolver buildVariableResolver(SProject sProject, WebHookContentObjectSerialiser webhookPayload, Object javaBean, ExtraParameters extraAndTeamCityProperties);
 	
 

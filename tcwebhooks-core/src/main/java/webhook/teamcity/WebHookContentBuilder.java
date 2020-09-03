@@ -64,22 +64,34 @@ public class WebHookContentBuilder {
 			wh.setEnabledForBuildState(state, overrideIsEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(state)));
 			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
-				wh.setPayload(payloadFormat.buildAddedToQueue(sBuild, mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), templateForThisBuild));
-				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, whc.getUrl(), state, sBuild, payloadFormat, mergeParameters(whc.getParams(),sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), user, comment));
-				wh.checkFilters(getVariableResolver(variableResolverFactory, state, sBuild, payloadFormat, mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), user, comment));
-				wh.resolveHeaders(getVariableResolver(variableResolverFactory, state, sBuild, payloadFormat, mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), user, comment));
+				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild));
+				wh.setPayload(payloadFormat.buildAddedToQueue(sBuild, extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
+				WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, state, extraParameters, whc.getEnabledTemplates(), user, comment);
+				VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+				wh.resolveAuthenticationParameters(builder);
+				wh.setUrl(builder.build(whc.getUrl()));
+				wh.checkFilters(builder);
+				wh.resolveHeaders(builder);
 			}
 		} else if (state.equals(BuildStateEnum.BUILD_REMOVED_FROM_QUEUE) ){
 			wh.setEnabledForBuildState(state, overrideIsEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(state)));
 			if (Boolean.TRUE.equals(wh.isEnabled())){
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
-				wh.setPayload(payloadFormat.buildRemovedFromQueue(sBuild, mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), templateForThisBuild, user, comment));
-				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, whc.getUrl(), state, sBuild, payloadFormat, mergeParameters(whc.getParams(),sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), user, comment));
-				wh.checkFilters(getVariableResolver(variableResolverFactory, state, sBuild, payloadFormat, mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), user, comment));
-				wh.resolveHeaders(getVariableResolver(variableResolverFactory, state, sBuild, payloadFormat, mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild)), whc.getEnabledTemplates(), user, comment));
+				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), null, getPreferredDateFormat(templateForThisBuild));
+				wh.setPayload(payloadFormat.buildRemovedFromQueue(sBuild, extraParameters, whc.getEnabledTemplates(), templateForThisBuild, user, comment));
+				WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, state, extraParameters, whc.getEnabledTemplates(), user, comment);
+				VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+				wh.resolveAuthenticationParameters(builder);
+				wh.setUrl(builder.build(whc.getUrl()));
+				wh.checkFilters(builder);
+				wh.resolveHeaders(builder);
 			}
 		}
 		return wh;
+	}
+
+	private VariableMessageBuilder createVariableMessageBuilder(WebHookPayload payloadFormat, VariableResolverFactory variableResolverFactory, WebHookPayloadContent content) {
+		return  variableResolverFactory.createVariableMessageBuilder(variableResolverFactory.buildVariableResolver(content.getProject(), payloadFormat, content, content.getAllParameters()));
 	}
 	
 	public WebHook buildWebHookContent(WebHook wh, WebHookConfig whc, SBuild sBuild, BuildStateEnum state, String username, String comment, boolean isOverrideEnabled) {
@@ -97,11 +109,12 @@ public class WebHookContentBuilder {
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildStarted(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
-				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, wh, whc.getUrl(), state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates()));
-				VariableResolver resolver = getVariableResolver(variableResolverFactory, wh, state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates());
-				wh.resolveAuthenticationParameters(resolver);
-				wh.checkFilters(resolver);
-				wh.resolveHeaders(resolver);
+				WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, getPreviousNonPersonalBuild(wh, sBuild), state, extraParameters, whc.getEnabledTemplates());
+				VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+				wh.resolveAuthenticationParameters(builder);
+				wh.setUrl(builder.build(whc.getUrl()));
+				wh.checkFilters(builder);
+				wh.resolveHeaders(builder);
 			}
 		} else if (state.equals(BuildStateEnum.CHANGES_LOADED)){
 			wh.setEnabledForBuildState(BuildStateEnum.CHANGES_LOADED, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(BuildStateEnum.CHANGES_LOADED)));
@@ -109,11 +122,12 @@ public class WebHookContentBuilder {
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.changesLoaded(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
-				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, wh, whc.getUrl(), state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates()));
-				VariableResolver resolver = getVariableResolver(variableResolverFactory, wh, state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates());
-				wh.resolveAuthenticationParameters(resolver);
-				wh.checkFilters(resolver);
-				wh.resolveHeaders(resolver);
+				WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, getPreviousNonPersonalBuild(wh, sBuild), state, extraParameters, whc.getEnabledTemplates());
+				VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+				wh.resolveAuthenticationParameters(builder);
+				wh.setUrl(builder.build(whc.getUrl()));
+				wh.checkFilters(builder);
+				wh.resolveHeaders(builder);
 			}
 		} else if (state.equals(BuildStateEnum.BUILD_INTERRUPTED)){
 			wh.setEnabledForBuildState(BuildStateEnum.BUILD_INTERRUPTED, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(BuildStateEnum.BUILD_INTERRUPTED)));
@@ -121,11 +135,12 @@ public class WebHookContentBuilder {
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildInterrupted(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
-				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, wh, whc.getUrl(), state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates()));
-				VariableResolver resolver = getVariableResolver(variableResolverFactory, wh, state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates());
-				wh.checkFilters(resolver);
-				wh.resolveAuthenticationParameters(resolver);
-				wh.resolveHeaders(resolver);
+				WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, getPreviousNonPersonalBuild(wh, sBuild), state, extraParameters, whc.getEnabledTemplates());
+				VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+				wh.resolveAuthenticationParameters(builder);
+				wh.setUrl(builder.build(whc.getUrl()));
+				wh.checkFilters(builder);
+				wh.resolveHeaders(builder);
 			}
 		} else if (state.equals(BuildStateEnum.BEFORE_BUILD_FINISHED)){
 			wh.setEnabledForBuildState(BuildStateEnum.BEFORE_BUILD_FINISHED, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(BuildStateEnum.BEFORE_BUILD_FINISHED)));
@@ -133,11 +148,12 @@ public class WebHookContentBuilder {
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.beforeBuildFinish(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
-				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, wh, whc.getUrl(), state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates()));
-				VariableResolver resolver = getVariableResolver(variableResolverFactory, wh, state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates());
-				wh.resolveAuthenticationParameters(resolver);
-				wh.checkFilters(resolver);
-				wh.resolveHeaders(resolver);
+				WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, getPreviousNonPersonalBuild(wh, sBuild), state, extraParameters, whc.getEnabledTemplates());
+				VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+				wh.resolveAuthenticationParameters(builder);
+				wh.setUrl(builder.build(whc.getUrl()));
+				wh.checkFilters(builder);
+				wh.resolveHeaders(builder);
 			}
 		} else if (state.equals(BuildStateEnum.BUILD_FINISHED) || state.equals(BuildStateEnum.BUILD_SUCCESSFUL) || state.equals(BuildStateEnum.BUILD_FAILED) || state.equals(BuildStateEnum.BUILD_FIXED) || state.equals(BuildStateEnum.BUILD_BROKEN)){
 			wh.setEnabledForBuildState(BuildStateEnum.BUILD_FINISHED, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(
@@ -149,11 +165,12 @@ public class WebHookContentBuilder {
 				templateForThisBuild = findTemplateForState(sBuild, BuildState.getEffectiveState(state, sBuild.getStatusDescriptor().isSuccessful(), this.hasBuildChangedHistoricalState(sBuild,getPreviousNonPersonalBuild(wh, sBuild))), whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildFinished(sBuild, getPreviousNonPersonalBuild(wh, sBuild), extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
-				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, wh, whc.getUrl(), BuildState.getEffectiveState(state, sBuild.getStatusDescriptor().isSuccessful(), this.hasBuildChangedHistoricalState(sBuild, getPreviousNonPersonalBuild(wh, sBuild))), sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates()));
-				VariableResolver resolver = getVariableResolver(variableResolverFactory, wh, state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates());
-				wh.resolveAuthenticationParameters(resolver);
-				wh.checkFilters(resolver);
-				wh.resolveHeaders(resolver);
+				WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, getPreviousNonPersonalBuild(wh, sBuild), BuildState.getEffectiveState(state, sBuild.getStatusDescriptor().isSuccessful(), this.hasBuildChangedHistoricalState(sBuild, getPreviousNonPersonalBuild(wh, sBuild))), extraParameters, whc.getEnabledTemplates());
+				VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+				wh.resolveAuthenticationParameters(builder);
+				wh.setUrl(builder.build(whc.getUrl()));
+				wh.checkFilters(builder);
+				wh.resolveHeaders(builder);
 			}
 		} else if (state.equals(BuildStateEnum.BUILD_PINNED)) {
 			wh.setEnabledForBuildState(state, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(state)));
@@ -161,11 +178,12 @@ public class WebHookContentBuilder {
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildPinned(sBuild, extraParameters, whc.getEnabledTemplates(), templateForThisBuild, username, comment));
-				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, whc.getUrl(), state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates(), username, comment));
-				VariableResolver resolver = getVariableResolver(variableResolverFactory, state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates(), username, comment);
-				wh.resolveAuthenticationParameters(resolver);
-				wh.checkFilters(resolver);
-				wh.resolveHeaders(resolver);
+				WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, state, extraParameters, whc.getEnabledTemplates(), username, comment);
+				VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+				wh.resolveAuthenticationParameters(builder);
+				wh.setUrl(builder.build(whc.getUrl()));
+				wh.checkFilters(builder);
+				wh.resolveHeaders(builder);
 			}
 		} else if (state.equals(BuildStateEnum.BUILD_UNPINNED)) {
 			wh.setEnabledForBuildState(state, isOverrideEnabled || (whc.isEnabledForBuildType(sBuild.getBuildType()) && wh.getBuildStates().enabled(state)));
@@ -173,11 +191,12 @@ public class WebHookContentBuilder {
 				templateForThisBuild = findTemplateForState(sBuild, state, whc.getPayloadTemplate());
 				ExtraParameters extraParameters = mergeParameters(whc.getParams(), sBuild.getBuildType().getProject(), sBuild, getPreferredDateFormat(templateForThisBuild));
 				wh.setPayload(payloadFormat.buildUnpinned(sBuild, extraParameters, whc.getEnabledTemplates(), templateForThisBuild, username, comment));
-				wh.setUrl(resolveTemplatedUrl(variableResolverFactory, whc.getUrl(), state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates(), username, comment));
-				VariableResolver resolver = getVariableResolver(variableResolverFactory, state, sBuild, payloadFormat, extraParameters, whc.getEnabledTemplates(), username, comment);
-				wh.resolveAuthenticationParameters(resolver);
-				wh.checkFilters(resolver);
-				wh.resolveHeaders(resolver);
+				WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, state, extraParameters, whc.getEnabledTemplates(), username, comment);
+				VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+				wh.resolveAuthenticationParameters(builder);
+				wh.setUrl(builder.build(whc.getUrl()));
+				wh.checkFilters(builder);
+				wh.resolveHeaders(builder);
 			}
 		}
 		return wh;
@@ -197,9 +216,12 @@ public class WebHookContentBuilder {
 			templateForThisBuild = findTemplateForState(responsibilityHolder.getSProject(), state, whc.getPayloadTemplate());
 			ExtraParameters extraParameters = mergeParameters(whc.getParams(), responsibilityHolder.getSProject(), null, getPreferredDateFormat(templateForThisBuild));
 			wh.setPayload(payloadFormat.responsibilityChanged(responsibilityHolder, extraParameters, whc.getEnabledTemplates(), templateForThisBuild));
-			wh.setUrl(resolveTemplatedUrl(variableResolverFactory, whc.getUrl(), state, responsibilityHolder, payloadFormat, extraParameters, whc.getEnabledTemplates()));
-			wh.checkFilters(getVariableResolver(variableResolverFactory, state, responsibilityHolder, payloadFormat, extraParameters, whc.getEnabledTemplates()));
-			wh.resolveHeaders(getVariableResolver(variableResolverFactory, state, responsibilityHolder, payloadFormat, extraParameters, whc.getEnabledTemplates()));
+			WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, responsibilityHolder, state, extraParameters, whc.getEnabledTemplates());
+			VariableMessageBuilder builder = createVariableMessageBuilder(payloadFormat, variableResolverFactory, content);
+			wh.resolveAuthenticationParameters(builder);
+			wh.setUrl(builder.build(whc.getUrl()));
+			wh.checkFilters(builder);
+			wh.resolveHeaders(builder);
 		}
 		return wh;
 	}
@@ -216,8 +238,8 @@ public class WebHookContentBuilder {
 		if (url.contains(variableResolverFactory.getPayloadTemplateType().getVariablePrefix()) && url.contains(variableResolverFactory.getPayloadTemplateType().getVariableSuffix())){
 			WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, getPreviousNonPersonalBuild(wh, sBuild), buildState, extraParameters, templates);
 			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(content.getProject(), serialiser,content, content.getAllParameters());
-			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(url, variableResolver);
-			return builder.build();
+			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(variableResolver);
+			return builder.build(url);
 		} else {
 			return url;
 		}
@@ -228,20 +250,17 @@ public class WebHookContentBuilder {
 		if (url.contains(variableResolverFactory.getPayloadTemplateType().getVariablePrefix()) && url.contains(variableResolverFactory.getPayloadTemplateType().getVariableSuffix())){
 			WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sBuild, buildState, extraParameters, templates, user, comment);
 			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(content.getProject(), serialiser,content, content.getAllParameters());
-			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(url, variableResolver);
-			return builder.build();
+			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(variableResolver);
+			return builder.build(url);
 		} else {
 			return url;
 		}
 	}
 	
 	/** SQueuedBuild version */
-	public String resolveTemplatedUrl(VariableResolverFactory variableResolverFactory, String url, BuildStateEnum buildState, SQueuedBuild sQueuedBuild, WebHookContentObjectSerialiser serialiser, ExtraParameters extraParameters, Map<String,String> templates, String user, String comment){
+	public String resolveTemplatedUrl(VariableResolverFactory variableResolverFactory, String url, VariableMessageBuilder builder){
 		if (url.contains(variableResolverFactory.getPayloadTemplateType().getVariablePrefix()) && url.contains(variableResolverFactory.getPayloadTemplateType().getVariableSuffix())){
-			WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, sQueuedBuild, buildState, extraParameters, templates, user, comment);
-			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(content.getProject(), serialiser,content, content.getAllParameters());
-			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(url, variableResolver);
-			return builder.build();
+			return builder.build(url);
 		} else {
 			return url;
 		}
@@ -251,8 +270,8 @@ public class WebHookContentBuilder {
 		if (url.contains(variableResolverFactory.getPayloadTemplateType().getVariablePrefix()) && url.contains(variableResolverFactory.getPayloadTemplateType().getVariableSuffix())){
 			WebHookPayloadContent content = new WebHookPayloadContent(variableResolverFactory, server, responsibilityHolder, buildState, extraParameters, templates);
 			VariableResolver variableResolver = variableResolverFactory.buildVariableResolver(content.getProject(), serialiser,content, content.getAllParameters());
-			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(url, variableResolver);
-			return builder.build();
+			VariableMessageBuilder builder = variableResolverFactory.createVariableMessageBuilder(variableResolver);
+			return builder.build(url);
 		} else {
 			return url;
 		}

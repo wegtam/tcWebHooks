@@ -58,7 +58,7 @@ public class WebHookPayloadContentChangesTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		when(sBuildServer.getRootUrl()).thenReturn("http://localhost/");
-		when(variableResolverFactory.createVariableMessageBuilder(any(), any())).thenReturn(variableMessageBuilder);
+		when(variableResolverFactory.createVariableMessageBuilder(any())).thenReturn(variableMessageBuilder);
 	}
 
 	@Test
