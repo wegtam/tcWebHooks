@@ -104,7 +104,7 @@ public class WebHookPayloadTailoredJsonTest {
 		ExtraParameters extraParameters = new ExtraParameters();
 		extraParameters.addAll("params", new TreeMap<String,String>());
 		extraParameters.addAll("teamcity", new TreeMap<String,String>());
-		Map templates = new TreeMap<String,String>();
+		Map<String,String> templates = new TreeMap<>();
 		templates.put(WebHookPayloadDefaultTemplates.HTML_BUILDSTATUS_TEMPLATE, "test template");
 		
 		WebHookMockingFramework framework = WebHookMockingFrameworkImpl.create(BuildStateEnum.BUILD_FINISHED, extraParameters);

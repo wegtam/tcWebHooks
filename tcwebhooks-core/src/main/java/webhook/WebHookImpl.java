@@ -40,7 +40,6 @@ import webhook.teamcity.WebHookExecutionException;
 import webhook.teamcity.auth.WebHookAuthConfig;
 import webhook.teamcity.auth.WebHookAuthenticator;
 import webhook.teamcity.payload.variableresolver.VariableMessageBuilder;
-import webhook.teamcity.payload.variableresolver.VariableResolver;
 import webhook.teamcity.payload.variableresolver.VariableResolverFactory;
 import webhook.teamcity.settings.WebHookFilterConfig;
 import webhook.teamcity.settings.WebHookHeaderConfig;

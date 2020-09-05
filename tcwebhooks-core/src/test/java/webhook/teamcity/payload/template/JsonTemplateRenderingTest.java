@@ -4,16 +4,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import jetbrains.buildServer.messages.Status;
-import jetbrains.buildServer.serverSide.SBuildServer;
-import jetbrains.buildServer.serverSide.SFinishedBuild;
 
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import jetbrains.buildServer.messages.Status;
+import jetbrains.buildServer.serverSide.SBuildServer;
+import jetbrains.buildServer.serverSide.SFinishedBuild;
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.MockSBuildType;
 import webhook.teamcity.MockSProject;

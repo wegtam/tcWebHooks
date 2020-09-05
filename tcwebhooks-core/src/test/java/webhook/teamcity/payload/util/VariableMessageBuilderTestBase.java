@@ -3,8 +3,6 @@ package webhook.teamcity.payload.util;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 

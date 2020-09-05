@@ -14,7 +14,6 @@ import webhook.teamcity.payload.WebHookContentObjectSerialiser;
 import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.variableresolver.VariableResolver;
 import webhook.teamcity.settings.secure.WebHookSecretResolver;
-import webhook.teamcity.settings.secure.WebHookSecretResolverFactory;
 
 /**
  * This is a VariableResolver for the TemplateMatcher

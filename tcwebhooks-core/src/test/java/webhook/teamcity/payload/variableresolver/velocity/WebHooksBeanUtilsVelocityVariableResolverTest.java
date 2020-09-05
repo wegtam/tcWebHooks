@@ -1,4 +1,4 @@
-package webhook.teamcity.payload.variableresolver.standard;
+package webhook.teamcity.payload.variableresolver.velocity;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,7 +11,7 @@ import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.content.WebHookPayloadContent;
 import webhook.teamcity.payload.variableresolver.VariableResolver;
 
-public class WebHooksBeanUtilsVariableResolverTest {
+public class WebHooksBeanUtilsVelocityVariableResolverTest {
 
 	@Test
 	public void testResolve() {
@@ -20,7 +20,7 @@ public class WebHooksBeanUtilsVariableResolverTest {
 		JavaBean javaBean = new JavaBean("bt123", "project01");
 		
 		ExtraParameters extraParameters = new ExtraParameters();
-		VariableResolver variableResolver = new WebHooksBeanUtilsVariableResolver(null, webHookContentObjectSerialiser, javaBean, extraParameters, null);
+		VariableResolver variableResolver = new WebHooksBeanUtilsVelocityVariableResolver(null, webHookContentObjectSerialiser, javaBean, extraParameters, null);
 		assertEquals("bt123", variableResolver.resolve("buildId"));
 		assertEquals("project01", variableResolver.resolve("projectId"));
 	}
