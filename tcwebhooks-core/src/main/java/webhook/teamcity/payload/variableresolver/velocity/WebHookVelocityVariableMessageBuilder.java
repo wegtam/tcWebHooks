@@ -13,7 +13,6 @@ public class WebHookVelocityVariableMessageBuilder implements VariableMessageBui
 
 	private static final String PACKAGE = "webhook.teamcity.payload.variableresolver.velocity.";
 	Context resolver;
-	StringWriter sw;
 	VelocityEngine ve ;
 	
 	public static WebHookVelocityVariableMessageBuilder create(Context resolver, WebHookSecretResolver webHookSecretResolver){
@@ -37,15 +36,17 @@ public class WebHookVelocityVariableMessageBuilder implements VariableMessageBui
 	    builder.ve.setApplicationAttribute("webhook.teamcity.settings.secure.WebHookSecretResolver", webHookSecretResolver);
 	    
 		builder.ve.init();
-		builder.sw =  new StringWriter();
 		builder.resolver = resolver;
 		return builder;
 	}
 
 	@Override
 	public String build(String template) {
-		this.ve.evaluate(resolver, sw, "WebHookVelocityVariableMessageBuilder", template);
-		return sw.toString();
+		StringWriter swParse1 =  new StringWriter();
+		this.ve.evaluate(resolver, swParse1, "WebHookVelocityVariableMessageBuilder", template);
+		StringWriter swParse2 =  new StringWriter();
+		this.ve.evaluate(resolver, swParse2, "WebHookVelocityVariableMessageBuilder", swParse1.toString());
+		return swParse2.toString();
 	}
 
 }
