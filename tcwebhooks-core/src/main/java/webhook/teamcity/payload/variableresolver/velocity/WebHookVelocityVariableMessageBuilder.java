@@ -48,9 +48,4 @@ public class WebHookVelocityVariableMessageBuilder implements VariableMessageBui
 		return sw.toString();
 	}
 
-	@Override
-	public String build() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

@@ -18,11 +18,6 @@ public class WebHookVariableMessageBuilder implements VariableMessageBuilder {
 	}
 
 	@Override
-	public String build(){
-		return matcher.replace(null, resolver);
-	}
-
-	@Override
 	public String build(String template) {
 		return matcher.replace(template, resolver);
 	}
