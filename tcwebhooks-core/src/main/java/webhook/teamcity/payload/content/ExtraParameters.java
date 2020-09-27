@@ -207,4 +207,11 @@ public class ExtraParameters extends ArrayList<WebHookParameterModel> {
 			}
 		}
 	}
+	public List<WebHookParameter> getAll() {
+		List<WebHookParameter> all = new ArrayList<>();
+		for (WebHookParameterModel model : this) {
+			all.add(model);
+		}
+		return all;
+	}
 }
