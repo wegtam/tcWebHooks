@@ -8,6 +8,7 @@ import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.serverSide.SProject;
 import webhook.teamcity.BuildState;
 import webhook.teamcity.auth.WebHookAuthConfig;
+import webhook.teamcity.payload.content.ExtraParameters;
 
 public interface WebHookSettingsManager {
 
@@ -18,13 +19,15 @@ public interface WebHookSettingsManager {
 
 	public WebHookUpdateResult addNewWebHook(String projectInternalId, String projectExternalId, String url,
 			Boolean enabled, BuildState buildState, String template, boolean buildTypeAll,
-			boolean buildTypeSubProjects, Set<String> buildTypesEnabled, WebHookAuthConfig webHookAuthConfig);
+			boolean buildTypeSubProjects, Set<String> buildTypesEnabled, WebHookAuthConfig webHookAuthConfig,
+			ExtraParameters extraParameters);
 
 	public WebHookUpdateResult deleteWebHook(String webHookId, String projectId);
 
 	public WebHookUpdateResult updateWebHook(String projectId, String webHookId, String url, Boolean enabled,
 			BuildState buildState, String template, boolean buildTypeAll, boolean buildSubProjects,
-			Set<String> buildTypesEnabled, WebHookAuthConfig webHookAuthConfig);
+			Set<String> buildTypesEnabled, WebHookAuthConfig webHookAuthConfig, ExtraParameters extraParameters,
+											 List<WebHookFilterConfig> filters);
 	
 
 	public List<WebHookSearchResult> findWebHooks(WebHookSearchFilter filter);
