@@ -10,6 +10,7 @@ import static webhook.teamcity.BuildStateEnum.CHANGES_LOADED;
 import static webhook.teamcity.BuildStateEnum.BUILD_STARTED;
 import static webhook.teamcity.BuildStateEnum.BUILD_SUCCESSFUL;
 import static webhook.teamcity.BuildStateEnum.RESPONSIBILITY_CHANGED;
+import static webhook.teamcity.BuildStateEnum.BUILD_TAGGED;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -538,6 +539,9 @@ public class WebHookConfig {
 			if (states.enabled(BuildStateEnum.BUILD_UNPINNED)){
 				enabledStates += ", Build Unpinned";
 			}
+			if (states.enabled(BuildStateEnum.BUILD_TAGGED)){
+				enabledStates += ", Build Tagged";
+			}
 			if (states.enabled(BuildStateEnum.SERVICE_MESSAGE_RECEIVED)){
 				enabledStates += ", Service Message Received";
 			}
@@ -599,6 +603,10 @@ public class WebHookConfig {
 
 	public String getStateBuildBrokenAsChecked() {
 		return getAsChecked(BUILD_BROKEN);
+	}
+
+	public String getStateBbuildPromotionTagsChangedAsChecked() {
+		return getAsChecked(BUILD_TAGGED);
 	}
 
 	private String getPayloadFormat() {
