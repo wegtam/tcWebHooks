@@ -605,7 +605,7 @@ public class WebHookConfig {
 		return getAsChecked(BUILD_BROKEN);
 	}
 
-	public String getStateBbuildPromotionTagsChangedAsChecked() {
+	public String getStateBuildTagsChangedAsChecked() {
 		return getAsChecked(BUILD_TAGGED);
 	}
 

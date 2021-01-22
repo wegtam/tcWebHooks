@@ -18,7 +18,7 @@ public enum BuildStateEnum {
 	BUILD_TAGGED			("buildPromotionTagsChanged","been tagged",							"Build Tagged",						"Tagged");
 	REPORT_STATISTICS		("reportStatistics",		"reported statistics",					"Statistics Reported",				"Statistics Reported"), 
 	SERVICE_MESSAGE_RECEIVED("serviceMessageReceived",	"received a service message",			"Service Message Received",			"Service Message Received");
-    
+
     private final String shortName;
     private final String descriptionSuffix;
     private final String shortDescription;
