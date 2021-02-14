@@ -130,13 +130,15 @@ public class WebHookPayloadContent {
 		}
 
 		/**
-		 * Constructor: Called by Pin events.
+		 * Constructor: Called by Pin and Tag events .
 		 * @param variableResolverFactory
 		 * @param server
 		 * @param sBuild
 		 * @param buildState
 		 * @param extraParameters
 		 * @param customTemplates (legacy, eg buildStatusHtmlTemplate)
+		 * @param username
+		 * @param comment
 		 */
 		public WebHookPayloadContent(VariableResolverFactory variableResolverFactory, SBuildServer server, SBuild sBuild, 
 				BuildStateEnum buildState, 

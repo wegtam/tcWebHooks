@@ -114,6 +114,7 @@ public class WebHookListenerTest {
 		when(webHookParameterStore.getAllWebHookParameters(sProject)).thenReturn(Collections.emptyList());
 		contentBuilder = new WebHookContentBuilder(sBuildServer, templateResolver, resolverManager, webHookParameterStore);
 		whl = new WebHookListener(sBuildServer, settings, configSettings, templateManager, factory, templateResolver, contentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);
+		whl.setMyWebHookTagsEventHandler(webHookTagsEventHandler);
 		projSettings = new WebHookProjectSettings();
 		when(factory.getWebHook(any(WebHookConfig.class), any(WebHookProxyConfig.class))).thenReturn(webHookImpl);
 		when(manager.isRegisteredFormat("JSON")).thenReturn(true);
@@ -144,11 +145,13 @@ public class WebHookListenerTest {
 	@Test
 	public void testWebHookListener() {
 		WebHookListener whl = new WebHookListener(sBuildServer, settings,configSettings, templateManager, factory, templateResolver, contentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);
+		whl.setMyWebHookTagsEventHandler(webHookTagsEventHandler);
 	}
 
 	@Test
 	public void testRegister() {
 		WebHookListener whl = new WebHookListener(sBuildServer, settings,configSettings, templateManager, factory, templateResolver, contentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);
+		whl.setMyWebHookTagsEventHandler(webHookTagsEventHandler);
 		whl.register();
 		verify(sBuildServer).addListener(whl);
 	}
@@ -242,6 +245,7 @@ public class WebHookListenerTest {
 		MockSProject sProject = new MockSProject("Test Project", "A test project", "project1", "ATestProject", sBuildType);
 		sBuildType.setProject(sProject);
 		WebHookListener whl = new WebHookListener(sBuildServer, settings,configSettings, templateManager, factory, templateResolver, contentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);
+		whl.setMyWebHookTagsEventHandler(webHookTagsEventHandler);
 		Status oldStatus = Status.NORMAL;
 		Status newStatus = Status.FAILURE;
 		whl.register();

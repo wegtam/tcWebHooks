@@ -1,9 +1,11 @@
 package webhook.teamcity;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -115,7 +117,15 @@ public class WebHookListener extends BuildServerAdapter implements WebHooksStati
 			webHookExecutor.execute(wh, whc, sBuild, state, user, comment, false);
 		}
 	}
-	
+
+	public void processBuildTagsChanged(BuildPromotion buildPromotion, String user, Collection<TagData> oldTags, Collection<TagData> newTags) {
+		Loggers.SERVER.debug(ABOUT_TO_PROCESS_WEB_HOOKS_FOR + buildPromotion.getBuildType().getProjectId() + AT_BUILD_STATE + BuildStateEnum.BUILD_TAGGED.getShortName());
+		for (WebHookConfig whc : getListOfEnabledWebHooks(buildPromotion.getBuildType().getProjectId())){
+			WebHook wh = webHookFactory.getWebHook(whc, myMainSettings.getProxyConfigForUrl(whc.getUrl()));
+			webHookExecutor.execute(wh, whc, buildPromotion, BuildStateEnum.BUILD_TAGGED, user, oldTags, newTags, false);
+		}
+	}
+
 	/** 
 	 * Build a list of Enabled webhooks to pass to the POSTing logic.
 	 * @param projectId
@@ -213,9 +223,9 @@ public class WebHookListener extends BuildServerAdapter implements WebHooksStati
 	/**
 	 * New version of responsibleChanged, which has some bugfixes, but 
 	 * is only available in versions 7.0 and above.    
-	 * @param bt
-	 * @param oldValue
-	 * @param newValue
+	 * @param sBuildType
+	 * @param responsibilityEntryOld
+	 * @param responsibilityEntryNew
 	 * @since 7.0
 	 */
 	@Override
@@ -335,9 +345,17 @@ public class WebHookListener extends BuildServerAdapter implements WebHooksStati
 	}
 	
 	@Override
-	public void serverStartup() {
-		mySettings.initialise();
+	public void buildPromotionTagsChanged(@NotNull BuildPromotion buildPromotion, @Nullable User user, @NotNull Collection<TagData> oldTags, @NotNull Collection<TagData> newTags) {
+		this.myWebHookTagsEventHandler.addTagsEvent(
+				new WebHookTagsEventHandlerImpl.TagWrapper(
+						Instant.now(), 
+						buildPromotion, 
+						user != null ? user.getUsername() : null, 
+						oldTags, 
+						newTags)
+		);
 	}
+	
 
 	@Override
 	public void reportStatistics(WebHookConfig reportingWebhookConfig, StatisticsReport statisticsReport) {
@@ -360,5 +378,8 @@ public class WebHookListener extends BuildServerAdapter implements WebHooksStati
 		processBuildEvent(runningBuild, BuildStateEnum.SERVICE_MESSAGE_RECEIVED);
 	}
 
-	
+	@Override
+	public void serverStartup() {
+		mySettings.initialise();
+	}
 }

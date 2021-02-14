@@ -40,6 +40,7 @@ import webhook.teamcity.WebHookFactory;
 import webhook.teamcity.WebHookFactoryImpl;
 import webhook.teamcity.WebHookHttpClientFactoryImpl;
 import webhook.teamcity.WebHookListener;
+import webhook.teamcity.WebHookTagsEventHandler;
 import webhook.teamcity.auth.AbstractWebHookAuthenticatorFactory;
 import webhook.teamcity.auth.WebHookAuthenticatorProvider;
 import webhook.teamcity.auth.basic.UsernamePasswordAuthenticatorFactory;
@@ -108,6 +109,7 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 	WebHookPayload payloadXml = new WebHookPayloadXml(manager, webHookVariableResolverManager);
 	WebHookPayload payloadNvpairs = new WebHookPayloadNameValuePairs(manager, webHookVariableResolverManager);
 	WebHookPayload payloadJsonTemplate = new WebHookPayloadJsonTemplate(manager, webHookVariableResolverManager);
+	WebHookTagsEventHandler webHookTagsEventHandler = mock(WebHookTagsEventHandler.class);
 	
 	WebHookPayloadTemplate templateJson = new LegacyJsonWebHookTemplate(templateManager);
 	
@@ -157,6 +159,7 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 		webHookImpl = new TestingWebHookFactory().getWebHook();
 		spyWebHook = spy(webHookImpl);   
 		whl = new WebHookListener(sBuildServer, settings, configSettings, templateManager, factory, resolver, contentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);
+		whl.setMyWebHookTagsEventHandler(webHookTagsEventHandler);
 		projSettings = new WebHookProjectSettings();
 //		when(factory.getWebHook(webHookConfig,null)).thenReturn(webHookImpl);
 //		when(factory.getWebHook()).thenReturn(webHookImpl);

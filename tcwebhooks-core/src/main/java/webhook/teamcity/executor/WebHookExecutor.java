@@ -1,12 +1,17 @@
 package webhook.teamcity.executor;
 
+import jetbrains.buildServer.serverSide.BuildPromotion;
+import jetbrains.buildServer.serverSide.TagData;
 import org.jetbrains.annotations.NotNull;
 
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SQueuedBuild;
+import org.jetbrains.annotations.Nullable;
 import webhook.WebHook;
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.settings.WebHookConfig;
+
+import java.util.Collection;
 
 public interface WebHookExecutor {
 	
@@ -53,9 +58,29 @@ public interface WebHookExecutor {
 	 */
 	public void execute(
 			@NotNull WebHook webHook, 
-			@NotNull WebHookConfig whc, 
+			@NotNull WebHookConfig webHookConfig, 
 			@NotNull BuildStateEnum state,
 			@NotNull WebHookResponsibilityHolder responsibilityHolder, 
 			boolean isTest);
 
+	/**
+	 * Executor for build tagged events.
+	 * @param webHook
+	 * @param webHookConfig
+	 * @param buildPromotion
+	 * @param state
+	 * @param user
+	 * @param oldTags
+	 * @param newTags
+	 * @param isTest
+	 */
+	public void execute(
+			@NotNull WebHook webHook,
+			@NotNull WebHookConfig webHookConfig,
+			@NotNull BuildPromotion buildPromotion,
+			@NotNull BuildStateEnum state, 
+			@Nullable String user,
+			@NotNull Collection<TagData> oldTags,
+			@NotNull Collection<TagData> newTags, 
+			boolean isTest);
 }

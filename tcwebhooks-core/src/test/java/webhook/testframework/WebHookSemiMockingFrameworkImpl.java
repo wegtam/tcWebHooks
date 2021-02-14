@@ -1,6 +1,7 @@
 package webhook.testframework;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedMap;
 
 import org.jdom.JDOMException;
 import org.mockito.Mockito;
@@ -31,6 +33,7 @@ import webhook.teamcity.ProjectIdResolver;
 import webhook.teamcity.WebHookContentBuilder;
 import webhook.teamcity.WebHookFactory;
 import webhook.teamcity.WebHookListener;
+import webhook.teamcity.WebHookTagsEventHandler;
 import webhook.teamcity.auth.WebHookAuthenticatorProvider;
 import webhook.teamcity.auth.basic.UsernamePasswordAuthenticatorFactory;
 import webhook.teamcity.executor.WebHookExecutor;
@@ -158,6 +161,7 @@ public class WebHookSemiMockingFrameworkImpl implements WebHookMockingFramework 
 		webHookStatisticsExecutor = new WebHookSerialExecutorImpl(webHookRunnerFactory);
 		
 		webHookListener = new WebHookListener(sBuildServer, projectSettingsManager, configSettings, webHookTemplateManager, webHookFactory, webHookTemplateResolver, webHookContentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);
+		webHookListener.setMyWebHookTagsEventHandler(webHookTagsEventHandler);
 		when(projectSettingsManager.getTemplateUsageCount((String)any())).thenReturn(0);
 		when(projectManager.findProjectById("project01")).thenReturn(sProject);
 		when(projectManager.findBuildTypeById("bt1")).thenReturn(sBuildType);

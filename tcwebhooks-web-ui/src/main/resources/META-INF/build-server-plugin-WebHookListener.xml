@@ -9,6 +9,7 @@
   		>
         <constructor-arg ref="webHookExecutor"/>
         <constructor-arg ref="webHookExecutor"/>
+		<property name="myWebHookTagsEventHandler" ref="webHookTagsEventHandler"/>
   	</bean>
   		
 	<!-- bean id="testListener" 
@@ -290,6 +291,12 @@
 		class="webhook.teamcity.payload.WebHookTemplateFileChangeHandler"
 		init-method="requestDeferredRegistration"
 		/>
+		
+	<bean id="webHookTagsEventHandler"
+		class="webhook.teamcity.WebHookTagsEventHandlerImpl"
+		init-method="requestDeferredRegistration">
+		<property name="webHookListener" ref="webHookListener"/>
+	</bean>
 		
 	<bean id="webHookTemplateResolver"
 		class="webhook.teamcity.payload.WebHookTemplateResolver"

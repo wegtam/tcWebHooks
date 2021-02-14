@@ -1,13 +1,19 @@
 package webhook.teamcity.executor;
 
+import jetbrains.buildServer.serverSide.BuildPromotion;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.SQueuedBuild;
+import jetbrains.buildServer.serverSide.TagData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import webhook.WebHook;
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.settings.WebHookConfig;
 import webhook.teamcity.settings.WebHookMainSettings;
 import webhook.teamcity.statistics.StatisticsReport;
+
+import java.util.Collection;
 
 public class WebHookExecutorManager implements WebHookExecutor, WebHookStatisticsExecutor {
 	
@@ -44,6 +50,19 @@ public class WebHookExecutorManager implements WebHookExecutor, WebHookStatistic
 			myWebHookSerialExecutor.execute(webHook, whc, state, responsibilityHolder, isTest);
 		}
 	}
+
+	@Override
+	public void execute(@NotNull WebHook webHook, @NotNull WebHookConfig webHookConfig, 
+						@NotNull BuildPromotion buildPromotion, @NotNull BuildStateEnum state, 
+						@Nullable String user, @NotNull Collection<TagData> oldTags, @NotNull Collection<TagData> newTags, 
+						boolean isTest) {
+		if (myWebHookMainSettings.useThreadedExecutor()) {
+			myWebHookThreadingExecutor.execute(webHook, webHookConfig, buildPromotion, state, user, oldTags, newTags, isTest);
+		} else {
+			myWebHookSerialExecutor.execute(webHook, webHookConfig, buildPromotion, state, user, oldTags, newTags, isTest);
+		}
+	}
+
 
 	@Override
 	public void execute(WebHook webHook, WebHookConfig whc, SBuild sBuild, BuildStateEnum state, String username,
