@@ -4,7 +4,6 @@ import com.google.common.collect.Iterables;
 import jetbrains.buildServer.log.LogInitializer;
 import jetbrains.buildServer.serverSide.BuildPromotion;
 import jetbrains.buildServer.serverSide.TagData;
-import jetbrains.buildServer.users.User;
 import jetbrains.buildServer.util.executors.ExecutorsFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,6 +52,11 @@ public class WebHookTagsEventHandlerImpl implements DeferrableService, WebHookTa
             ourScheduler = ExecutorsFactory.newFixedScheduledDaemonExecutor("WebHookTagsEventHandler", 1);
         }
         start();
+    }
+    
+    @Override
+    public void unregister() {
+    	stop();
     }
     
     @Override
