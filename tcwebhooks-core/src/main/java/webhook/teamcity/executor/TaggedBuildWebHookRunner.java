@@ -1,24 +1,21 @@
 package webhook.teamcity.executor;
 
 import jetbrains.buildServer.serverSide.BuildPromotion;
-import jetbrains.buildServer.serverSide.TagData;
 import webhook.WebHook;
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.WebHookContentBuilder;
 import webhook.teamcity.history.WebHookHistoryItem;
 import webhook.teamcity.history.WebHookHistoryItem.WebHookErrorStatus;
+import webhook.teamcity.payload.content.WebHooksTags;
 import webhook.teamcity.history.WebHookHistoryItemFactory;
 import webhook.teamcity.history.WebHookHistoryRepository;
 import webhook.teamcity.settings.WebHookConfig;
-
-import java.util.Collection;
 
 public class TaggedBuildWebHookRunner extends AbstractWebHookExecutor implements WebHookRunner {
 
     private final BuildPromotion buildPromotion;
     private final String user;
-	private final Collection<TagData> oldTags;
-	private final Collection<TagData> newTags;
+	private final WebHooksTags tags;
 
 	public TaggedBuildWebHookRunner(
 			WebHookContentBuilder webHookContentBuilder,
@@ -30,8 +27,7 @@ public class TaggedBuildWebHookRunner extends AbstractWebHookExecutor implements
 			WebHook webhook,
 			BuildPromotion buildPromotion,
 			String user,
-			Collection<TagData> oldTags,
-			Collection<TagData> newTags,
+			WebHooksTags tags,
 			boolean isTest)
 	{
 		super (
@@ -45,14 +41,13 @@ public class TaggedBuildWebHookRunner extends AbstractWebHookExecutor implements
 			 isTest);
 		this.buildPromotion = buildPromotion;
 		this.user = user;
-		this.oldTags = oldTags;
-		this.newTags = newTags;
+		this.tags = tags;
 	}
 
 
 	@Override
 	protected WebHook getWebHookContent() {
-		return webHookContentBuilder.buildWebHookContent(webhook, whc, buildPromotion.getAssociatedBuild(), state, user, null, overrideIsEnabled);
+		return webHookContentBuilder.buildWebHookContent(webhook, whc, buildPromotion.getAssociatedBuild(), state, tags, user, overrideIsEnabled);
 	}
 
 	@Override

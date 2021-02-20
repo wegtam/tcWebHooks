@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import webhook.WebHook;
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.Loggers;
+import webhook.teamcity.payload.content.WebHooksTags;
 import webhook.teamcity.settings.WebHookConfig;
 import webhook.teamcity.statistics.StatisticsReport;
 
@@ -63,12 +64,12 @@ public class WebHookSerialExecutorImpl implements WebHookSerialExecutor, WebHook
 	@Override
 	public void execute(@NotNull WebHook webhook, @NotNull WebHookConfig whc, 
 						@NotNull BuildPromotion buildPromotion, @NotNull BuildStateEnum state, @Nullable String user, 
-						@NotNull Collection<TagData> oldTags, @NotNull Collection<TagData> newTags, boolean isTest) {
+						@NotNull WebHooksTags tags, boolean isTest) {
 
 		Loggers.SERVER.debug("WebHookSerialExecutorImpl :: About to schedule runner for webhook :: " +
 				webhook.getExecutionStats().getTrackingIdAsString() + " : " + whc.getUniqueKey());
 
-		webHookRunnerFactory.getRunner(webhook, whc, buildPromotion, state, user, oldTags, newTags, isTest).run();
+		webHookRunnerFactory.getRunner(webhook, whc, buildPromotion, state, user, tags, isTest).run();
 
 		Loggers.SERVER.debug("WebHookSerialExecutorImpl :: Finished scheduling runner for webhook :: " +
 				webhook.getExecutionStats().getTrackingIdAsString() + " : " + whc.getUniqueKey());

@@ -36,6 +36,7 @@ public class BuildState {
 		states.put(BuildStateEnum.BUILD_UNPINNED, 			new SimpleBuildState(BuildStateEnum.BUILD_UNPINNED, 			false)); 
 		states.put(BuildStateEnum.BUILD_UNPINNED, 			new SimpleBuildState(BuildStateEnum.BUILD_UNPINNED, 			false)); 
 		states.put(BuildStateEnum.BUILD_TAGGED,				new SimpleBuildState(BuildStateEnum.BUILD_TAGGED,				false)); 
+		states.put(BuildStateEnum.BUILD_UNTAGGED,			new SimpleBuildState(BuildStateEnum.BUILD_UNTAGGED,				false)); 
 		states.put(BuildStateEnum.SERVICE_MESSAGE_RECEIVED, new SimpleBuildState(BuildStateEnum.SERVICE_MESSAGE_RECEIVED, 	false)); 
 		states.put(BuildStateEnum.REPORT_STATISTICS, 		new SimpleBuildState(BuildStateEnum.REPORT_STATISTICS, 			false)); 
 	}

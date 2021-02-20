@@ -198,6 +198,10 @@
             		<td class="buildPinned" style="padding-left:3px;"><label style='white-space:nowrap;'><input class="buildState" id="buildPinned" name="BuildPinned" type=checkbox /> Build Pinned</label></td>
             		<td class="buildUnpinned" style="padding-left:3px;"><label style='white-space:nowrap;'><input class="buildState" id="buildUnpinned" name="BuildUnpinned" type=checkbox /> Build Unpinned</label></td>
             	</tr>
+            	<tr><td></td>
+            		<td class="buildTagged" style="padding-left:3px;"><label style='white-space:nowrap;'><input class="buildState" id="buildTagged" name="BuildTagged" type=checkbox /> Build Tagged</label></td>
+            		<td class="buildUntagged" style="padding-left:3px;"><label style='white-space:nowrap;'><input class="buildState" id="buildUntagged" name="BuildUntagged" type=checkbox /> Build Untagged</label></td>
+            	</tr>
                  <tr>
  					<td colspan="3">
  					<div id="tab-container" class="tab-container">
@@ -218,7 +222,7 @@
 						<div id='branchOption'>
 						</div>
 					  </div>
-					</div>                        
+					</div>
                     </td>
                  </tr>
             </table>

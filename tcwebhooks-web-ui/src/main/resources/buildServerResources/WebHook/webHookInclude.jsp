@@ -199,10 +199,6 @@
 														 Service Message Received</label>
 													</td>
 													<td></td>
-													<td class="buildTagsChanged" style="padding-left:3px;"><label style='white-space:nowrap;'>
-														<input onclick='selectBuildState();' class="buildState" id="buildTagsChanged" name="BuildTagged" type=checkbox />
-														 Build Tagged</label>
-													</td>
 												</tr>
 												<tr style="border:none;"><td>&nbsp;</td>
 													<td class="buildPinned" style="padding-left:3px;"><label style='white-space:nowrap;'>
@@ -212,6 +208,16 @@
 													<td class="buildUnpinned"><label style='white-space:nowrap;'>
 														<input onclick='selectBuildState();' class="buildState" id="buildUnpinned" name="BuildUnpinned" type=checkbox />
 														 Build Unpinned</label>
+													</td>
+												</tr>
+												<tr style="border:none;"><td>&nbsp;</td>
+													<td class="buildTagged" style="padding-left:3px;"><label style='white-space:nowrap;'>
+														<input onclick='selectBuildState();' class="buildState" id="buildTagged" name="BuildTagged" type=checkbox />
+														 Build Tagged</label>
+													</td>
+													<td class="buildUntagged"><label style='white-space:nowrap;'>
+														<input onclick='selectBuildState();' class="buildState" id="buildUntagged" name="BuildUntagged" type=checkbox />
+														 Build Untagged</label>
 													</td>
 												</tr>
 												<tr style="border:none;" class="onCompletion"><td style="vertical-align:text-top;">On Completion:</td>
@@ -280,9 +286,10 @@
 								            			<option value="buildInterrupted">Build Interrupted</option>
 								            			<option value="beforeBuildFinish">Build Almost Completed</option>
 								            			<option value="responsibilityChanged">Build Responsibility Changed</option>
-														<option value="buildTagsChanged">Build Tagged</option>
 								            			<option value="buildPinned">Build Pinned</option>
 								            			<option value="buildUnpinned">Build Unpinned</option>
+														<option value="buildTagged">Build Tagged</option>
+														<option value="buildUntagged">Build Untagged</option>
 								            			<option value="buildSuccessful">Build Successful</option>
 								            			<option value="buildFixed"> - Build changes from Failure to Success</option>
 								            			<option value="buildFailed">Build Failed</option>

@@ -40,7 +40,10 @@ public class WebHookTest{
 		assertTrue(BuildStateEnum.BEFORE_BUILD_FINISHED.getShortName().equals("beforeBuildFinish"));
 		assertTrue(BuildStateEnum.RESPONSIBILITY_CHANGED.getShortName().equals("responsibilityChanged"));
 		assertTrue(BuildStateEnum.BUILD_INTERRUPTED.getShortName().equals("buildInterrupted"));
-		assertTrue(BuildStateEnum.BUILD_TAGGED.getShortName().equals("buildTagsChanged"));
+		assertTrue(BuildStateEnum.BUILD_PINNED.getShortName().equals("buildPinned"));
+		assertTrue(BuildStateEnum.BUILD_UNPINNED.getShortName().equals("buildUnpinned"));
+		assertTrue(BuildStateEnum.BUILD_TAGGED.getShortName().equals("buildTagged"));
+		assertTrue(BuildStateEnum.BUILD_UNTAGGED.getShortName().equals("buildUntagged"));
 
 		
 	}

@@ -232,6 +232,8 @@ WebHooksPlugin = {
 										{ type: "responsibilityChanged", enabled : false, editable: true },
 										{ type: "buildPinned", 			 enabled : false, editable: true },
 										{ type: "buildUnpinned",		 enabled : false, editable: true },
+										{ type: "buildTagged", 			 enabled : false, editable: true },
+										{ type: "buildUntagged",		 enabled : false, editable: true },
 										{ type: "serviceMessageReceived",enabled : false, editable: true }
 									]
 					};

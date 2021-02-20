@@ -11,10 +11,13 @@ import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.WebHookContentBuilder;
 import webhook.teamcity.history.WebHookHistoryItemFactory;
 import webhook.teamcity.history.WebHookHistoryRepository;
+import webhook.teamcity.payload.content.WebHooksTags;
 import webhook.teamcity.settings.WebHookConfig;
 import webhook.teamcity.statistics.StatisticsReport;
 
 import java.util.Collection;
+
+import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
 public class WebHookRunnerFactory {
@@ -75,7 +78,7 @@ public class WebHookRunnerFactory {
 	}
 
 	public WebHookRunner getRunner(WebHook webhook, WebHookConfig whc, BuildPromotion buildPromotion, BuildStateEnum state, 
-			   String user, Collection<TagData> oldTags, Collection<TagData> newTags, boolean isTest) {
+			   String user, WebHooksTags tags, boolean isTest) {
 		return new TaggedBuildWebHookRunner(
 				webHookContentBuilder,
 				webHookHistoryRepository,
@@ -86,11 +89,10 @@ public class WebHookRunnerFactory {
 				webhook,
 				buildPromotion,
 				user,
-				oldTags,
-				newTags,
+				tags,
 				isTest
 			);
-	}
+		}
 	
 	public WebHookRunner getRunner(WebHook webhook, WebHookConfig whc, BuildStateEnum state, StatisticsReport report, SProject rootProject, boolean isTest) {
 		return new StatisticsReporterWebHookRunner(

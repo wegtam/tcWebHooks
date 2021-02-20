@@ -162,6 +162,7 @@
 									    "BUILD_PINNED" : false,
 									    "BUILD_UNPINNED" : false,
 										"BUILD_TAGGED": false,
+										"BUILD_UNTAGGED": false,
 									    "SERVICE_MESSAGE_RECEIVED" : false
 								    }
 								}),

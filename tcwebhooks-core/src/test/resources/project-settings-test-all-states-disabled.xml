@@ -13,7 +13,8 @@
         <state type="buildFixed" enabled="false" />
         <state type="buildFailed" enabled="false" />
         <state type="responsibilityChanged" enabled="false" />
-        <state type="buildTagsChanged" enabled="false" />
+        <state type="buildTagged" enabled="false" />
+        <state type="buildUntagged" enabled="false" />
       </states>
     </webhook>
   </webhooks>

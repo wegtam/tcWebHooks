@@ -22,7 +22,7 @@ public class DiscordComWebHookTemplateTest extends AbstractSpringTemplateTest {
 		WebHookConfig whc  = ConfigLoaderUtil.getFirstWebHookInConfig(new File("src/test/resources/project-settings-test-discordcom.xml"));
 		WebHook wh = webHookFactory.getWebHook(whc,null);
 		
-		wh = webHookContentBuilder.buildWebHookContent(wh, whc, sRunningBuild, BuildStateEnum.BUILD_STARTED, null, null, true);
+		wh = webHookContentBuilder.buildWebHookContent(wh, whc, sRunningBuild, BuildStateEnum.BUILD_STARTED, (String)null, null, true);
 		System.out.println(wh.getPayload());
 		assertTrue(wh.getPayload().contains("{ \"name\" : \"Project Name\", \"value\" : \"[Test Project](http://my-server//project.html?projectId=ATestProject)\", \"inline\": true },"));
 

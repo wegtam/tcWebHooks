@@ -9,6 +9,7 @@ import jetbrains.buildServer.serverSide.SQueuedBuild;
 import org.jetbrains.annotations.Nullable;
 import webhook.WebHook;
 import webhook.teamcity.BuildStateEnum;
+import webhook.teamcity.payload.content.WebHooksTags;
 import webhook.teamcity.settings.WebHookConfig;
 
 import java.util.Collection;
@@ -80,7 +81,6 @@ public interface WebHookExecutor {
 			@NotNull BuildPromotion buildPromotion,
 			@NotNull BuildStateEnum state, 
 			@Nullable String user,
-			@NotNull Collection<TagData> oldTags,
-			@NotNull Collection<TagData> newTags, 
+			@NotNull WebHooksTags tags,
 			boolean isTest);
 }

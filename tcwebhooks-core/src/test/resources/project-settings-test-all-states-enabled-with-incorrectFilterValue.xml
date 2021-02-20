@@ -13,7 +13,8 @@
         <state type="buildFixed" enabled="false" />
         <state type="buildFailed" enabled="true" />
         <state type="responsibilityChanged" enabled="true" />
-        <state type="buildTagsChanged" enabled="true" />
+        <state type="buildTagged" enabled="true" />
+        <state type="buildUntagged" enabled="true" />
       </states>
 	  <trigger-filters>
 	  	<filter value="${zzzzzzzzzz}" regex="^master$" enabled="true"/>

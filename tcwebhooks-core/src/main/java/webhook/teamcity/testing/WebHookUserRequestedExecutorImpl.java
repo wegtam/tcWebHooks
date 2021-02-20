@@ -2,6 +2,8 @@ package webhook.teamcity.testing;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.joda.time.LocalDateTime;
 
@@ -32,6 +34,7 @@ import webhook.teamcity.payload.WebHookPayloadManager;
 import webhook.teamcity.payload.WebHookTemplateContent;
 import webhook.teamcity.payload.WebHookTemplateManager;
 import webhook.teamcity.payload.WebHookTemplateResolver;
+import webhook.teamcity.payload.content.WebHooksTags;
 import webhook.teamcity.payload.template.render.WebHookStringRenderer;
 import webhook.teamcity.payload.template.render.WebHookStringRenderer.WebHookHtmlRendererException;
 import webhook.teamcity.payload.variableresolver.WebHookVariableResolverManager;
@@ -50,6 +53,9 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 	private static final String A_TESTING_USER = "a testing user";
 	private static final String A_TEST_EXECUTION_COMMENT = "A test execution comment";
 	private static final String A_PREVIOUS_TESTING_USER = "a previous testing user";
+	private static final WebHooksTags A_TEST_EXECUTION_TAG_OBJECT = WebHooksTags.build(
+			new HashSet<String>(Arrays.asList("oldTag01","testTag02")),
+			new HashSet<String>(Arrays.asList("newTag01","testTag02")));
 	private final SBuildServer myServer;
 	private final WebHookMainSettings myMainSettings;
 	private final WebHookConfigFactory myWebHookConfigFactory;
@@ -131,6 +137,18 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 					A_TEST_EXECUTION_COMMENT,
 					true
 					);
+		} else if (webHookExecutionRequest.getTestBuildState().equals(BuildStateEnum.BUILD_TAGGED)
+				|| webHookExecutionRequest.getTestBuildState().equals(BuildStateEnum.BUILD_UNTAGGED)) {
+			
+			wh = myWebHookContentBuilder.buildWebHookContent(
+					wh,
+					webHookConfig,
+					myServer.findBuildInstanceById(webHookExecutionRequest.getBuildId()),
+					webHookExecutionRequest.getTestBuildState(),
+					A_TEST_EXECUTION_TAG_OBJECT,
+					A_TESTING_USER,
+					true
+					);
 		} else if (webHookExecutionRequest.getTestBuildState().equals(BuildStateEnum.RESPONSIBILITY_CHANGED)) {
 			SBuildType sBuildType = myServer.findBuildInstanceById(webHookExecutionRequest.getBuildId()).getBuildType();
 			WebHookResponsibilityHolder responsibilityHolder = WebHookResponsibilityHolder
@@ -154,8 +172,8 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 					webHookConfig,
 					myServer.findBuildInstanceById(webHookExecutionRequest.getBuildId()),
 					webHookExecutionRequest.getTestBuildState(),
-					null,
-					null,
+					(String)null,
+					(String)null,
 					true
 				);
 		}
@@ -230,8 +248,8 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 					webHookConfig,
 					myServer.findBuildInstanceById(webHookTemplateExecutionRequest.getBuildId()),
 					webHookTemplateExecutionRequest.getTestBuildState(),
-					null,
-					null,
+					(String)null,
+					(String)null,
 					true
 				);
 		}

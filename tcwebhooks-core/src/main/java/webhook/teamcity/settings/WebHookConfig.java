@@ -542,6 +542,9 @@ public class WebHookConfig {
 			if (states.enabled(BuildStateEnum.BUILD_TAGGED)){
 				enabledStates += ", Build Tagged";
 			}
+			if (states.enabled(BuildStateEnum.BUILD_UNTAGGED)){
+				enabledStates += ", Build Untagged";
+			}
 			if (states.enabled(BuildStateEnum.SERVICE_MESSAGE_RECEIVED)){
 				enabledStates += ", Service Message Received";
 			}

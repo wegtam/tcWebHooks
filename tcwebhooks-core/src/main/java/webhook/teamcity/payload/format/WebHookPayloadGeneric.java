@@ -16,6 +16,7 @@ import webhook.teamcity.payload.WebHookPayloadManager;
 import webhook.teamcity.payload.WebHookTemplateContent;
 import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.payload.content.WebHookPayloadContent;
+import webhook.teamcity.payload.content.WebHooksTags;
 import webhook.teamcity.payload.variableresolver.VariableResolverFactory;
 import webhook.teamcity.payload.variableresolver.WebHookVariableResolverManager;
 
@@ -78,8 +79,14 @@ public abstract class WebHookPayloadGeneric implements WebHookPayload {
 	}
 
 	@Override
-	public String buildTagsChanged(SBuild sBuild, ExtraParameters extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate, String username, String comment) {
-		WebHookPayloadContent content = new WebHookPayloadContent(getVariableResolverFactory(), myManager.getServer(), sBuild, BuildStateEnum.BUILD_TAGGED, extraParameters, templates, username, comment);
+	public String buildTagged(SBuild sBuild, ExtraParameters extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate, WebHooksTags tags, String username) {
+		WebHookPayloadContent content = new WebHookPayloadContent(getVariableResolverFactory(), myManager.getServer(), sBuild, BuildStateEnum.BUILD_TAGGED, extraParameters, templates, tags, username);
+		return getStatusAsString(content, webHookTemplate);
+	}
+	
+	@Override
+	public String buildUntagged(SBuild sBuild, ExtraParameters extraParameters, Map<String,String> templates, WebHookTemplateContent webHookTemplate, WebHooksTags tags, String username) {
+		WebHookPayloadContent content = new WebHookPayloadContent(getVariableResolverFactory(), myManager.getServer(), sBuild, BuildStateEnum.BUILD_UNTAGGED, extraParameters, templates, tags, username);
 		return getStatusAsString(content, webHookTemplate);
 	}
 

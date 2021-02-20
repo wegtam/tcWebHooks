@@ -14,6 +14,7 @@ import webhook.teamcity.payload.WebHookPayload;
 import webhook.teamcity.payload.WebHookPayloadManager;
 import webhook.teamcity.payload.WebHookTemplateContent;
 import webhook.teamcity.payload.content.ExtraParameters;
+import webhook.teamcity.payload.content.WebHooksTags;
 import webhook.teamcity.payload.template.render.WebHookStringRenderer;
 
 public class WebHookPayloadEmpty implements WebHookPayload, WebHookContentObjectSerialiser {
@@ -54,9 +55,15 @@ public class WebHookPayloadEmpty implements WebHookPayload, WebHookContentObject
 	}
 
 	@Override
-	public String buildTagsChanged(SBuild sBuild,
-											ExtraParameters extraParameters, Map<String,String> templates, 
-											WebHookTemplateContent webHookTemplate, String username, String comment) {
+	public String buildTagged(SBuild sBuild,
+			ExtraParameters extraParameters, Map<String,String> templates, 
+			WebHookTemplateContent webHookTemplate, WebHooksTags tags, String username) {
+		return "";
+	}
+	@Override
+	public String buildUntagged(SBuild sBuild,
+			ExtraParameters extraParameters, Map<String,String> templates, 
+			WebHookTemplateContent webHookTemplate, WebHooksTags tags, String username) {
 		return "";
 	}
 	

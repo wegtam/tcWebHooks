@@ -8,6 +8,7 @@ import jetbrains.buildServer.serverSide.SFinishedBuild;
 import jetbrains.buildServer.serverSide.SQueuedBuild;
 import webhook.teamcity.executor.WebHookResponsibilityHolder;
 import webhook.teamcity.payload.content.ExtraParameters;
+import webhook.teamcity.payload.content.WebHooksTags;
 import webhook.teamcity.payload.template.render.WebHookStringRenderer;
 
 public interface WebHookPayload extends WebHookContentObjectSerialiser {
@@ -118,9 +119,21 @@ public interface WebHookPayload extends WebHookContentObjectSerialiser {
      * @param extraParameters
      * @param templates
      * @param webHookTemplate
-     * @return Formatted payload for the WebHook to send for the buildTagsChanged event.
+     * @return Formatted payload for the WebHook to send for the buildTagged event.
      */
-	String buildTagsChanged(SBuild sBuild, ExtraParameters extraParameters, Map<String, String> templates, WebHookTemplateContent webHookTemplate, String username, String comment);
+	String buildTagged(SBuild sBuild, ExtraParameters extraParameters, Map<String, String> templates, WebHookTemplateContent webHookTemplate, WebHooksTags tags, String username);
+
+	/**
+	 * Extracts the required information from the sBuild and extraParameters configured in the webhook
+	 * or build parameters and returns a String of the WebHook payload.
+	 *
+	 * @param sBuild
+	 * @param extraParameters
+	 * @param templates
+	 * @param webHookTemplate
+	 * @return Formatted payload for the WebHook to send for the buildUntagged event.
+	 */
+	String buildUntagged(SBuild sBuild, ExtraParameters extraParameters, Map<String, String> templates, WebHookTemplateContent webHookTemplate, WebHooksTags tags, String username);
 
 	/**
 	 * Extracts the required information from the sBuild and extraParameters configured in the webhook

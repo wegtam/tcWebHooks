@@ -22,7 +22,7 @@ public class FlowdockWebHookTemplateTest extends AbstractSpringTemplateTest {
 		WebHookConfig webhookFlowDock  = ConfigLoaderUtil.getFirstWebHookInConfig(new File("src/test/resources/project-settings-test-flowdock.xml"));
 		WebHook wh = webHookFactory.getWebHook(webhookFlowDock,null);
 		
-		wh = webHookContentBuilder.buildWebHookContent(wh, webhookFlowDock, sRunningBuild, BuildStateEnum.BUILD_STARTED, null, null, true);
+		wh = webHookContentBuilder.buildWebHookContent(wh, webhookFlowDock, sRunningBuild, BuildStateEnum.BUILD_STARTED, (String)null, null, true);
 		System.out.println(wh.getPayload());
 		assertTrue(wh.getPayload().contains("\"tags\": [ \"#TestBuild\", \"#ATestProject\", \"#buildStarted\", \"#master\", \"#teamcity\" ],"));
 	}

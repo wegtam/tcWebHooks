@@ -1,10 +1,10 @@
 package webhook.teamcity;
 
 public enum BuildStateEnum {
-    BUILD_ADDED_TO_QUEUE	("buildAddedToQueue",		"been added to the build queue",		"Build Added to Queue", 			"Queued"),                
-    BUILD_REMOVED_FROM_QUEUE("buildRemovedFromQueue",	"been removed from the build queue",	"Build Removed from Queue by User", "De-queued"),                
-    BUILD_STARTED 			("buildStarted",			"started",								"Build Started", 					"Started"),                
-    CHANGES_LOADED 			("changesLoaded",			"loaded changes",						"Changes Loaded", 					"Changes Loaded"),                
+    BUILD_ADDED_TO_QUEUE	("buildAddedToQueue",		"been added to the build queue",		"Build Added to Queue", 			"Queued"),
+    BUILD_REMOVED_FROM_QUEUE("buildRemovedFromQueue",	"been removed from the build queue",	"Build Removed from Queue by User", "De-queued"),
+    BUILD_STARTED 			("buildStarted",			"started",								"Build Started", 					"Started"),
+    CHANGES_LOADED 			("changesLoaded",			"loaded changes",						"Changes Loaded", 					"Changes Loaded"),
     BUILD_INTERRUPTED		("buildInterrupted", 		"been interrupted",						"Build Interrupted", 				"Interrupted"),
     BEFORE_BUILD_FINISHED	("beforeBuildFinish", 		"nearly finished",						"Build Almost Completed", 			"Almost Completed"),
 	BUILD_FINISHED 			("buildFinished", 			"finished",								"Build Finished",					"Finished"),
@@ -16,6 +16,7 @@ public enum BuildStateEnum {
 	BUILD_PINNED			("buildPinned", 			"been pinned",							"Build Pinned",						"Pinned"), 
 	BUILD_UNPINNED			("buildUnpinned",			"been unpinned",						"Build Unpinned",					"Unpinned"),
 	BUILD_TAGGED			("buildTagsChanged",		"been tagged",							"Build Tagged",						"Tagged");
+	BUILD_UNTAGGED			("buildUntagged",			"been untagged",						"Build Untagged",					"Untagged"),
 	REPORT_STATISTICS		("reportStatistics",		"reported statistics",					"Statistics Reported",				"Statistics Reported"), 
 	SERVICE_MESSAGE_RECEIVED("serviceMessageReceived",	"received a service message",			"Service Message Received",			"Service Message Received");
 

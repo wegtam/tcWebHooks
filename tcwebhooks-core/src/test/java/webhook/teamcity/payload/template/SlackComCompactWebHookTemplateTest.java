@@ -22,7 +22,7 @@ public class SlackComCompactWebHookTemplateTest extends AbstractSpringTemplateTe
 		WebHookConfig webhookSlackCompact  = ConfigLoaderUtil.getFirstWebHookInConfig(new File("src/test/resources/project-settings-test-slack.xml"));
 		WebHook wh = webHookFactory.getWebHook(webhookSlackCompact,null);
 		
-		wh = webHookContentBuilder.buildWebHookContent(wh, webhookSlackCompact, sRunningBuild, BuildStateEnum.BUILD_STARTED, null, null, true);
+		wh = webHookContentBuilder.buildWebHookContent(wh, webhookSlackCompact, sRunningBuild, BuildStateEnum.BUILD_STARTED, (String)null, null, true);
 		System.out.println(wh.getPayload());
 		assertTrue(wh.getPayload().contains("{ \"title\" : \"Project Name\", \"value\" : \"<http://my-server//project.html?projectId=ATestProject|Test Project>\", \"short\": true },"));
 	}

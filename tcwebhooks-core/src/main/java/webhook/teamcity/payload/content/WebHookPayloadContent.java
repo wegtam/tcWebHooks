@@ -83,6 +83,7 @@ public class WebHookPayloadContent {
 		List<String> buildRunners;
 		WebHooksComment buildComment; 
 		List<String> buildTags;
+		@Getter @Setter WebHooksTags buildTagsObject;
 		ExtraParameters extraParameters;
 		private ExtraParameters teamcityProperties;
 		@Getter private int maxChangeFileListSize = 100;
@@ -91,6 +92,7 @@ public class WebHookPayloadContent {
 		private List<WebHooksChanges> changes = new ArrayList<>();
 		private WebHookResponsibility responsibilityInfo;
 		private String pinEventUsername;
+		@Getter @Setter private String tagEventUsername;
 
 		@Getter @Setter private SBuild build;
 		@Getter @Setter private SProject project;
@@ -180,6 +182,31 @@ public class WebHookPayloadContent {
     		populateCommonContent(variableResolverFactory, server, sRunningBuild, previousBuild, buildState, customTemplates);
     		populateMessageAndText(sRunningBuild, buildState);
     		populateArtifacts(sRunningBuild);
+		}
+
+		/**
+		 * Contructor: Called by tagged and untagged events.
+		 * @param variableResolverFactory
+		 * @param server
+		 * @param sBuild
+		 * @param state
+		 * @param extraParameters
+		 * @param enabledTemplates
+		 * @param tags
+		 * @param user
+		 */
+		public WebHookPayloadContent(VariableResolverFactory variableResolverFactory, SBuildServer server,
+				SBuild sBuild, BuildStateEnum buildState, ExtraParameters extraParameters,
+				Map<String, String> customTemplates, WebHooksTags tags, String username) {
+			this.extraParameters =  extraParameters;
+			this.teamcityProperties =  extraParameters.getTeamcityParameters();
+    		populateCommonContent(variableResolverFactory, server, sBuild, null, buildState, customTemplates);
+    		populateMessageAndText(sBuild, buildState);
+    		populateArtifacts(sBuild);
+    		if (username != null) {
+    			this.tagEventUsername = username; 
+    		}
+    		this.buildTagsObject = tags;
 		}
 
 		private void populateArtifacts(SBuild runningBuild) {
