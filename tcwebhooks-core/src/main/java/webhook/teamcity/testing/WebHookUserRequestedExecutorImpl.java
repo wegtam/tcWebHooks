@@ -225,6 +225,18 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 						A_TEST_EXECUTION_COMMENT,
 						true
 						);
+		} else if (webHookTemplateExecutionRequest.getTestBuildState().equals(BuildStateEnum.BUILD_TAGGED)
+				|| webHookTemplateExecutionRequest.getTestBuildState().equals(BuildStateEnum.BUILD_UNTAGGED)) {
+			
+			wh = myWebHookContentBuilder.buildWebHookContent(
+					wh,
+					webHookConfig,
+					myServer.findBuildInstanceById(webHookTemplateExecutionRequest.getBuildId()),
+					webHookTemplateExecutionRequest.getTestBuildState(),
+					A_TEST_EXECUTION_TAG_OBJECT,
+					A_TESTING_USER,
+					true
+					);
 		} else if (webHookTemplateExecutionRequest.getTestBuildState().equals(BuildStateEnum.RESPONSIBILITY_CHANGED)) {
 			SBuildType sBuildType = myServer.findBuildInstanceById(webHookTemplateExecutionRequest.getBuildId()).getBuildType();
 			WebHookResponsibilityHolder responsibilityHolder = WebHookResponsibilityHolder
@@ -418,6 +430,18 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 												A_TEST_EXECUTION_COMMENT,
 												true
 											);
+	} else if (testBuildState.equals(BuildStateEnum.BUILD_TAGGED)
+			|| testBuildState.equals(BuildStateEnum.BUILD_UNTAGGED)) {
+		
+		webHookRunner = myWebHookRunnerFactory.getRunner(
+				wh,
+				webHookConfig,
+				sRunningBuild.getBuildPromotion(),
+				testBuildState,
+				A_TESTING_USER,
+				A_TEST_EXECUTION_TAG_OBJECT,
+				true
+				);
 	} else if (testBuildState.equals(BuildStateEnum.RESPONSIBILITY_CHANGED)) {
 		WebHookResponsibilityHolder responsibilityHolder = WebHookResponsibilityHolder
 																.builder()
