@@ -84,7 +84,10 @@
 						}
 					} ],
 					yAxes : [ {
-						stacked : true
+						stacked : true,
+						ticks: {
+							beginAtZero:true
+						}
 					} ]
 				},
 				legend: {
