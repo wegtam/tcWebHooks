@@ -158,6 +158,7 @@ public class WebHookSemiMockingFrameworkImpl implements WebHookMockingFramework 
 		historyRepository = new WebHookHistoryRepositoryImpl();
 		webHookRunnerFactory = new WebHookRunnerFactory(webHookContentBuilder, historyRepository, historyItemFactory);
 		webHookExecutor = new WebHookSerialExecutorImpl(webHookRunnerFactory);
+		WebHookTagsEventHandler webHookTagsEventHandler = mock(WebHookTagsEventHandler.class);
 		webHookStatisticsExecutor = new WebHookSerialExecutorImpl(webHookRunnerFactory);
 		
 		webHookListener = new WebHookListener(sBuildServer, projectSettingsManager, configSettings, webHookTemplateManager, webHookFactory, webHookTemplateResolver, webHookContentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);

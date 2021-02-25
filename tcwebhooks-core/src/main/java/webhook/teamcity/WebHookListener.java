@@ -62,6 +62,7 @@ public class WebHookListener extends BuildServerAdapter implements WebHooksStati
     private final WebHookFactory webHookFactory;
     private final WebHookExecutor webHookExecutor;
     private final WebHookStatisticsExecutor webHookStatisticsExecutor;
+	@Setter private WebHookTagsEventHandler myWebHookTagsEventHandler;
     
     
     public WebHookListener(SBuildServer sBuildServer, WebHookSettingsManager settings, 

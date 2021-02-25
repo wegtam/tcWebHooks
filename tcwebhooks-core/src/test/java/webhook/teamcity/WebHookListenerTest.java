@@ -93,6 +93,7 @@ public class WebHookListenerTest {
 	BuildState allBuildStates = new BuildState();
 	
 	WebHookParameterStore webHookParameterStore = mock(WebHookParameterStore.class);
+	WebHookTagsEventHandler webHookTagsEventHandler = mock(WebHookTagsEventHandler.class);
 
 	
 	@BeforeClass

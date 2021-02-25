@@ -15,7 +15,7 @@ public enum BuildStateEnum {
 	RESPONSIBILITY_CHANGED	("responsibilityChanged",	"changed responsibility",				"Build Responsibility Changed", 	"Responsibility Changed"),
 	BUILD_PINNED			("buildPinned", 			"been pinned",							"Build Pinned",						"Pinned"), 
 	BUILD_UNPINNED			("buildUnpinned",			"been unpinned",						"Build Unpinned",					"Unpinned"),
-	BUILD_TAGGED			("buildTagsChanged",		"been tagged",							"Build Tagged",						"Tagged");
+	BUILD_TAGGED			("buildTagged",				"been tagged",							"Build Tagged",						"Tagged"),
 	BUILD_UNTAGGED			("buildUntagged",			"been untagged",						"Build Untagged",					"Untagged"),
 	REPORT_STATISTICS		("reportStatistics",		"reported statistics",					"Statistics Reported",				"Statistics Reported"), 
 	SERVICE_MESSAGE_RECEIVED("serviceMessageReceived",	"received a service message",			"Service Message Received",			"Service Message Received");
@@ -89,6 +89,6 @@ public enum BuildStateEnum {
 				BUILD_ADDED_TO_QUEUE, BUILD_REMOVED_FROM_QUEUE, BUILD_STARTED, 
 				CHANGES_LOADED, BUILD_INTERRUPTED, BEFORE_BUILD_FINISHED, BUILD_SUCCESSFUL, 
 				BUILD_FAILED, BUILD_FIXED, BUILD_BROKEN, RESPONSIBILITY_CHANGED, 
-				BUILD_PINNED, BUILD_UNPINNED, BUILD_TAGGED, SERVICE_MESSAGE_RECEIVED };
+				BUILD_PINNED, BUILD_UNPINNED, BUILD_TAGGED, BUILD_UNTAGGED, SERVICE_MESSAGE_RECEIVED };
 	}
 }
