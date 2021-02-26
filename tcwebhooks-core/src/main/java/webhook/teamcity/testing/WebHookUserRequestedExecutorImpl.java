@@ -216,7 +216,7 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 		} else if (webHookTemplateExecutionRequest.getTestBuildState().equals(BuildStateEnum.BUILD_PINNED)
 				|| webHookTemplateExecutionRequest.getTestBuildState().equals(BuildStateEnum.BUILD_UNPINNED)) {
 
-				wh = myWebHookContentBuilder.buildWebHookContent(
+				wh = contentBuilder.buildWebHookContent(
 						wh,
 						webHookConfig,
 						myServer.findBuildInstanceById(webHookTemplateExecutionRequest.getBuildId()),
@@ -228,7 +228,7 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 		} else if (webHookTemplateExecutionRequest.getTestBuildState().equals(BuildStateEnum.BUILD_TAGGED)
 				|| webHookTemplateExecutionRequest.getTestBuildState().equals(BuildStateEnum.BUILD_UNTAGGED)) {
 			
-			wh = myWebHookContentBuilder.buildWebHookContent(
+			wh = contentBuilder.buildWebHookContent(
 					wh,
 					webHookConfig,
 					myServer.findBuildInstanceById(webHookTemplateExecutionRequest.getBuildId()),
@@ -246,7 +246,7 @@ public class WebHookUserRequestedExecutorImpl implements WebHookUserRequestedExe
 																	.responsibilityEntryOld(new TestingResponsibilityEntry(A_PREVIOUS_TESTING_USER, State.NONE))
 																	.responsibilityEntryNew(new TestingResponsibilityEntry(A_TESTING_USER, State.TAKEN))
 																	.build();
-			wh = myWebHookContentBuilder.buildWebHookContent(
+			wh = contentBuilder.buildWebHookContent(
 					wh, 
 					webHookConfig, 
 					responsibilityHolder, 
