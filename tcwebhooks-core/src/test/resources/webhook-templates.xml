@@ -73,7 +73,8 @@
 					<state type="buildFixed" enabled="false" />
 					<state type="buildFailed" enabled="true" />
 					<state type="responsibilityChanged" enabled="false" />
-					<state type="buildTagsChanged" enabled="true" />
+					<state type="buildTagged" enabled="true" />
+					<state type="buildUntagged" enabled="true" />
 				</states>
 			</template>
 		</templates>

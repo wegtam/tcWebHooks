@@ -123,6 +123,15 @@ public class WebHookListener extends BuildServerAdapter implements WebHooksStati
 		}
 	}
 
+	/**
+	 * Called by the sleeping tags thread (WebHookTagsEventHandler) to send
+	 * any events after the thread has waited about 500ms for new events.
+	 * 
+	 * @param buildPromotion
+	 * @param user
+	 * @param oldTags
+	 * @param newTags
+	 */
 	public void processBuildTagsChanged(BuildPromotion buildPromotion, String user, Collection<TagData> oldTags, Collection<TagData> newTags) {
 		Loggers.SERVER.debug(ABOUT_TO_PROCESS_WEB_HOOKS_FOR + buildPromotion.getBuildType().getProjectId() + AT_BUILD_STATE + BuildStateEnum.BUILD_TAGGED.getShortName());
 		
