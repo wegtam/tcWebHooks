@@ -3,7 +3,6 @@ package webhook.teamcity;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -138,17 +137,18 @@ public class WebHookListener extends BuildServerAdapter implements WebHooksStati
 		WebHooksTags tags = buildTags(oldTags, newTags);
 		
 		for (WebHookConfig whc : getListOfEnabledWebHooks(buildPromotion.getBuildType().getProjectId())){
-			WebHook wh = webHookFactory.getWebHook(whc, myMainSettings.getProxyConfigForUrl(whc.getUrl()));
 			if (!tags.getAddedTags().isEmpty()) {
+				WebHook wh = webHookFactory.getWebHook(whc, myMainSettings.getProxyConfigForUrl(whc.getUrl()));
 				webHookExecutor.execute(wh, whc, buildPromotion, BuildStateEnum.BUILD_TAGGED, user, tags, false);
 			}
 			if (!tags.getRemovedTags().isEmpty()) {
+				WebHook wh = webHookFactory.getWebHook(whc, myMainSettings.getProxyConfigForUrl(whc.getUrl()));
 				webHookExecutor.execute(wh, whc, buildPromotion, BuildStateEnum.BUILD_UNTAGGED, user, tags, false);
 			}
 		}
 	}
 
-	private WebHooksTags buildTags(Collection<TagData> oldTags, Collection<TagData> newTags) {
+	protected static WebHooksTags buildTags(Collection<TagData> oldTags, Collection<TagData> newTags) {
 
 		Set<String> oldTagset = oldTags.stream().filter(TagData::isPublic).map(TagData::getLabel).collect(Collectors.toSet());
 		Set<String> newTagset = newTags.stream().filter(TagData::isPublic).map(TagData::getLabel).collect(Collectors.toSet());

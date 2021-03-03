@@ -35,6 +35,7 @@ import webhook.teamcity.MockSBuildType;
 import webhook.teamcity.MockSProject;
 import webhook.teamcity.MockSRunningBuild;
 import webhook.teamcity.ProjectIdResolver;
+import webhook.teamcity.TestingWebHookHttpClientFactoryImpl;
 import webhook.teamcity.WebHookContentBuilder;
 import webhook.teamcity.WebHookFactory;
 import webhook.teamcity.WebHookFactoryImpl;
@@ -117,7 +118,7 @@ public class WebHookMockingFrameworkImpl implements WebHookMockingFramework {
 	WebHookPayload payload = new WebHookPayloadJson(manager, webHookVariableResolverManager);
 	WebHookProjectSettings projSettings;
 	//WebHookFactory factory = mock(WebHookFactory.class);
-	WebHookFactory factory = new WebHookFactoryImpl(configSettings, authenticatorProvider, new WebHookHttpClientFactoryImpl());
+	WebHookFactory factory = new WebHookFactoryImpl(configSettings, authenticatorProvider, new TestingWebHookHttpClientFactoryImpl());
 	WebHook webhook = mock (WebHook.class);
 	WebHook webHookImpl;
 	WebHook spyWebHook;

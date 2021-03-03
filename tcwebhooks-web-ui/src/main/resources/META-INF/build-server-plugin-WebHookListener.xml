@@ -29,8 +29,8 @@
         />
   		
 	<bean id="webHookThreadingExecutor"
-        class="webhook.teamcity.executor.WebHookThreadingExecutorImpl"
-        />
+        class="webhook.teamcity.executor.WebHookThreadingExecutorImpl">
+    </bean>
   		
 	<bean id="webHookRunnerFactory"
         class="webhook.teamcity.executor.WebHookRunnerFactory"

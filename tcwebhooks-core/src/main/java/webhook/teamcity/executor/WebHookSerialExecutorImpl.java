@@ -1,21 +1,19 @@
 package webhook.teamcity.executor;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import jetbrains.buildServer.serverSide.BuildPromotion;
 import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SProject;
 import jetbrains.buildServer.serverSide.SQueuedBuild;
-import jetbrains.buildServer.serverSide.TagData;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import webhook.WebHook;
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.Loggers;
 import webhook.teamcity.payload.content.WebHooksTags;
 import webhook.teamcity.settings.WebHookConfig;
 import webhook.teamcity.statistics.StatisticsReport;
-
-import java.util.Collection;
 
 @AllArgsConstructor
 public class WebHookSerialExecutorImpl implements WebHookSerialExecutor, WebHookStatisticsExecutor {

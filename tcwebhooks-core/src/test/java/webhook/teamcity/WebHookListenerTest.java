@@ -1,16 +1,19 @@
 package webhook.teamcity;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -24,9 +27,11 @@ import org.junit.Test;
 
 import jetbrains.buildServer.messages.Status;
 import jetbrains.buildServer.serverSide.BuildHistory;
+import jetbrains.buildServer.serverSide.BuildPromotion;
 import jetbrains.buildServer.serverSide.ProjectManager;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SFinishedBuild;
+import jetbrains.buildServer.serverSide.TagData;
 import webhook.TestingWebHookFactory;
 import webhook.WebHook;
 import webhook.WebHookProxyConfig;
@@ -55,6 +60,7 @@ import webhook.teamcity.settings.WebHookMainSettings;
 import webhook.teamcity.settings.WebHookProjectSettings;
 import webhook.teamcity.settings.WebHookSettingsManager;
 import webhook.teamcity.settings.project.WebHookParameterStore;
+import webhook.testframework.util.ConfigLoaderUtil;
 
 public class WebHookListenerTest {
 	SBuildServer sBuildServer = mock(SBuildServer.class);
@@ -70,7 +76,7 @@ public class WebHookListenerTest {
 	WebHookHistoryItemFactory historyItemFactory = new WebHookHistoryItemFactoryImpl(webAddressTransformer, projectManager);
 	WebHookContentBuilder contentBuilder;
 	WebHookRunnerFactory webHookRunnerFactory = new WebHookRunnerFactory(contentBuilder, historyRepository, historyItemFactory);
-	WebHookExecutor webHookExecutor = new WebHookSerialExecutorImpl(webHookRunnerFactory);
+	WebHookExecutor webHookExecutor = mock(WebHookExecutor.class);
 	WebHookStatisticsExecutor webHookStatisticsExecutor = new WebHookSerialExecutorImpl(webHookRunnerFactory);
 	WebHookAuthenticatorProvider authenticatorProvider = mock(WebHookAuthenticatorProvider.class);
 	WebHookVariableResolverManager resolverManager = new WebHookVariableResolverManagerImpl();
@@ -87,8 +93,10 @@ public class WebHookListenerTest {
 	List<SFinishedBuild> finishedSuccessfulBuilds = new ArrayList<>();
 	List<SFinishedBuild> finishedFailedBuilds = new ArrayList<>();
 	MockSBuildType sBuildType = new MockSBuildType("Test Build", "A Test Build", "bt1");
+	MockSBuildType sBuildTypeRoot = new MockSBuildType("Root Build", "A Root Build", "bt2");
 	MockSRunningBuild sRunningBuild = new MockSRunningBuild(sBuildType, "SubVersion", Status.NORMAL, "Running", "TestBuild01");
 	MockSProject sProject = new MockSProject("Test Project", "A test project", "project1", "ATestProject", sBuildType);
+	MockSProject rootProject = new MockSProject("Root Project", "A Root project", "_Root", "_Root", sBuildTypeRoot);
 	WebHookListener whl;
 	BuildState allBuildStates = new BuildState();
 	
@@ -117,13 +125,16 @@ public class WebHookListenerTest {
 		whl = new WebHookListener(sBuildServer, settings, configSettings, templateManager, factory, templateResolver, contentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);
 		whl.setMyWebHookTagsEventHandler(webHookTagsEventHandler);
 		projSettings = new WebHookProjectSettings();
+		projSettings.readFrom(ConfigLoaderUtil.getFullConfigElement(new File("src/test/resources/project-settings-test-all-states-enabled.xml")).getChild("webhooks"));
 		when(factory.getWebHook(any(WebHookConfig.class), any(WebHookProxyConfig.class))).thenReturn(webHookImpl);
 		when(manager.isRegisteredFormat("JSON")).thenReturn(true);
 		when(manager.getFormat("JSON")).thenReturn(payload);
 		when(manager.getServer()).thenReturn(sBuildServer);
+		when(templateManager.isRegisteredTemplate("legacy-nvpairs")).thenReturn(true);
 
 		when(sBuildServer.getProjectManager()).thenReturn(projectManager);
 		when(projectManager.findProjectById("project1")).thenReturn(sProject);
+		when(projectManager.findProjectById("_Root")).thenReturn(rootProject);
 		when(sBuildServer.getHistory()).thenReturn(buildHistory);
 		when(sBuildServer.getRootUrl()).thenReturn("http://test.server");
 		when(previousSuccessfulBuild.getBuildStatus()).thenReturn(Status.NORMAL);
@@ -135,18 +146,12 @@ public class WebHookListenerTest {
 		finishedFailedBuilds.add(previousFailedBuild);
 		sBuildType.setProject(sProject);
 		when(settings.getSettings(sRunningBuild.getProjectId())).thenReturn(projSettings);
+		when(settings.getSettings(eq("_Root"))).thenReturn(new WebHookProjectSettings());
 		whl.register();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-	}
-
-	@SuppressWarnings("unused")
-	@Test
-	public void testWebHookListener() {
-		WebHookListener whl = new WebHookListener(sBuildServer, settings,configSettings, templateManager, factory, templateResolver, contentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);
-		whl.setMyWebHookTagsEventHandler(webHookTagsEventHandler);
 	}
 
 	@Test
@@ -162,79 +167,8 @@ public class WebHookListenerTest {
 //		fail("Not yet implemented");
 //	}
 
-	@Test @Ignore
-	public void testBuildStartedSRunningBuild() throws FileNotFoundException, IOException {
-		BuildState state = new BuildState();
-		state.enable(BuildStateEnum.BUILD_STARTED);
-		projSettings.addNewWebHook("project1", "MyProject", "http://text/test", true, state, "testXMLtemplate", true, true, new HashSet<String>());
-		//when(webhook.isEnabled()).thenReturn(state.enabled(BuildStateEnum.BUILD_STARTED));
-		when(buildHistory.getEntriesBefore(sRunningBuild, false)).thenReturn(finishedSuccessfulBuilds);
-		
-		whl.buildStarted(sRunningBuild);
-		assertTrue(webHookImpl.isEnabled());
-		//verify(factory.getWebHook(webHookConfig,null), times(1)).post();
-		//webHookFactory.getWebHook(whc, myMainSettings.getProxyConfigForUrl(whc.getUrl()));
-	}
 
-	@Test @Ignore
-	public void testBuildFinishedSRunningBuild() throws FileNotFoundException, IOException {
-		BuildState state = new BuildState().setAllEnabled();
-		projSettings.addNewWebHook("1234", "MyProject", "http://text/test", true, state , "testXMLtemplate", true, true, new HashSet<String>());
-		when(webhook.isEnabled()).thenReturn(state.allEnabled());
-		when(buildHistory.getEntriesBefore(sRunningBuild, false)).thenReturn(finishedSuccessfulBuilds);
-		
-		whl.buildFinished(sRunningBuild);
-		verify(factory.getWebHook(webHookConfig,null), times(1)).post();
-	}
-	
-	@Test @Ignore
-	public void testBuildFinishedSRunningBuildSuccessAfterFailure() throws FileNotFoundException, IOException {
-		BuildState state = new BuildState();
-		state.enable(BuildStateEnum.BUILD_FIXED);
-		state.enable(BuildStateEnum.BUILD_FINISHED);
-		state.enable(BuildStateEnum.BUILD_SUCCESSFUL);
-		projSettings.addNewWebHook("1234", "MyProject", "http://text/test", true, state, "testXMLtemplate", true, true, new HashSet<String>());
-		when(webhook.isEnabled()).thenReturn(state.enabled(BuildStateEnum.BUILD_FIXED));
-		when(buildHistory.getEntriesBefore(sRunningBuild, false)).thenReturn(finishedFailedBuilds);
-		
-		whl.buildFinished(sRunningBuild);
-		verify(factory.getWebHook(webHookConfig,null), times(1)).post();
-	}
-	
-	@Test @Ignore
-	public void testBuildFinishedSRunningBuildSuccessAfterSuccess() throws FileNotFoundException, IOException {
-		BuildState state = new BuildState();
-		state.enable(BuildStateEnum.BUILD_FIXED);
-		projSettings.addNewWebHook("1234", "MyProject", "http://text/test", true, state, "testXMLtemplate", true, true, new HashSet<String>());
-		when(webhook.isEnabled()).thenReturn(state.enabled(BuildStateEnum.BUILD_FIXED));
-		when(buildHistory.getEntriesBefore(sRunningBuild, false)).thenReturn(finishedSuccessfulBuilds);
-		
-		whl.buildFinished(sRunningBuild);
-		verify(factory.getWebHook(webHookConfig,null), times(0)).post();
-	}
-
-	@Test @Ignore
-	public void testBuildInterruptedSRunningBuild() throws FileNotFoundException, IOException {
-		BuildState state = new BuildState().setAllEnabled();
-		projSettings.addNewWebHook("1234", "MyProject", "http://text/test", true, state, "testXMLtemplate", true, true, new HashSet<String>());
-		when(buildHistory.getEntriesBefore(sRunningBuild, false)).thenReturn(finishedSuccessfulBuilds);
-		
-		whl.buildInterrupted(sRunningBuild);
-		verify(factory.getWebHook(webHookConfig,null), times(1)).post();
-	}
-
-	@Test @Ignore
-	public void testBeforeBuildFinishSRunningBuild() throws FileNotFoundException, IOException {
-		BuildState state = new BuildState();
-		state.enable(BuildStateEnum.BEFORE_BUILD_FINISHED);
-		projSettings.addNewWebHook("1234", "MyProject", "http://text/test", true, state, "testXMLtemplate", true, true, new HashSet<String>());
-		when(buildHistory.getEntriesBefore(sRunningBuild, false)).thenReturn(finishedSuccessfulBuilds);
-		
-		whl.beforeBuildFinish(sRunningBuild);
-		verify(factory.getWebHook(webHookConfig,null), times(1)).post();
-	}
-
-	@Test @Ignore
+	@Test
 	public void testBuildChangedStatusSRunningBuildStatusStatus() throws FileNotFoundException, IOException {
 		MockSBuildType sBuildType = new MockSBuildType("Test Build", "A Test Build", "bt1");
 		sBuildType.setProject(sProject);
@@ -251,12 +185,35 @@ public class WebHookListenerTest {
 		Status newStatus = Status.FAILURE;
 		whl.register();
 		whl.buildChangedStatus(sRunningBuild, oldStatus, newStatus);
-		verify(factory.getWebHook(webHookConfig,null), times(0)).post();
+		verify(factory, times(0)).getWebHook(webHookConfig,null);
 	}
 
 //	@Test
 //	public void testResponsibleChangedSBuildTypeResponsibilityInfoResponsibilityInfoBoolean() {
 //		
 //	}
+	
+	@Test
+	public void testProcessBuildTagsChanged() {
+		
+    	BuildPromotion buildPromotion = mock(BuildPromotion.class);
+    	when(buildPromotion.getBuildType()).thenReturn(sBuildType);
+    	
+    	List<TagData> oldTags = Arrays.asList(
+    			TagData.createPublicTag("prod"),
+    			TagData.createPublicTag("release")
+    			);
+    	
+    	List<TagData> newTags = Arrays.asList(
+    			TagData.createPublicTag("prod"),
+    			TagData.createPublicTag("dev")
+    			);
+		
+		WebHookListener whl = new WebHookListener(sBuildServer, settings, configSettings, templateManager, factory, templateResolver, contentBuilder, historyRepository, historyItemFactory, webHookExecutor, webHookStatisticsExecutor);
+		whl.processBuildTagsChanged(buildPromotion, null, oldTags, newTags);
+		
+		verify(webHookExecutor).execute(any(), any(), eq(buildPromotion), eq(BuildStateEnum.BUILD_TAGGED), any(), any(), eq(false));
+		verify(webHookExecutor).execute(any(), any(), eq(buildPromotion), eq(BuildStateEnum.BUILD_UNTAGGED), any(), any(), eq(false));
+	}
 
 }

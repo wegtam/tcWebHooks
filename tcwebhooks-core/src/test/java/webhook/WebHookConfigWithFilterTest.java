@@ -18,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.TestingWebHookHttpClientFactoryImpl;
-import webhook.teamcity.TestingWebHookHttpClientFactoryImpl.TestableHttpClient;
 import webhook.teamcity.WebHookHttpClientFactory;
 import webhook.teamcity.payload.content.ExtraParameters;
 import webhook.teamcity.settings.WebHookMainSettings;
@@ -35,7 +34,6 @@ public class WebHookConfigWithFilterTest extends WebHookTestServerTestBase {
 	WebHookMainSettings mainSettings;
 	
 	WebHookHttpClientFactory webHookHttpClientFactory;
-	TestableHttpClient httpClient;
 	
 	WebHookTestServer s;
 	
@@ -47,8 +45,7 @@ public class WebHookConfigWithFilterTest extends WebHookTestServerTestBase {
 	public void setup(){
 		MockitoAnnotations.initMocks(this);
 		s = startWebServer();
-		httpClient = new TestableHttpClient();
-		webHookHttpClientFactory = new TestingWebHookHttpClientFactoryImpl(httpClient);
+		webHookHttpClientFactory = new TestingWebHookHttpClientFactoryImpl();
 	}
 	
 	@After

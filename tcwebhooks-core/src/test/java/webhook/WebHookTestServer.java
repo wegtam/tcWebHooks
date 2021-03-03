@@ -1,5 +1,6 @@
 package webhook;
 import java.util.EnumSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,8 @@ public class WebHookTestServer implements ResponseEvent {
 		public int lastResponseCode = -1;
 		public String lastRequestBody = null;
 		
+		
+		public AtomicInteger count = new AtomicInteger();
 		
 		public Server getServer() {
 			return server;
@@ -65,6 +68,7 @@ public class WebHookTestServer implements ResponseEvent {
 
 		@Override
 		public void updateResponseCode(int responseCode) {
+			this.count.getAndIncrement();
 			synchronized (server) {
 				this.lastResponseCode = responseCode;
 			}
@@ -80,5 +84,9 @@ public class WebHookTestServer implements ResponseEvent {
 			this.lastRequestBody = requestBody;
 		}
 		
+		@Override
+		public int getRequestCount() {
+			return this.count.get();
+		}
 
 }

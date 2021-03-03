@@ -9,9 +9,7 @@ import java.net.ConnectException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
-import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
-import org.springframework.util.SocketUtils;
 
 import webhook.teamcity.BuildStateEnum;
 import webhook.teamcity.auth.AbstractWebHookAuthenticator;
@@ -19,19 +17,7 @@ import webhook.teamcity.auth.WebHookAuthConfig;
 import webhook.teamcity.auth.basic.UsernamePasswordAuthenticator;
 
 
-public class WebHookTest{
-	public String proxy = "127.0.0.1";
-	public Integer proxyPort = SocketUtils.findAvailableTcpPort();
-	String proxyPortString = String.valueOf(proxyPort);
-	public Integer webserverPort = SocketUtils.findAvailableTcpPort();
-	public Integer proxyserverPort = proxyPort;
-	public String webserverHost = "127.0.0.1";
-	String url = "http://"  + webserverHost + ":" + webserverPort;
-	
-	public String proxyUsername = "foo";
-	public String proxyPassword = "bar";
-	
-	TestingWebHookFactory factory = new TestingWebHookFactory();
+public class WebHookTest extends WebHookTestBase {
 	
 	@Test
 	public void test_BuildStates(){
@@ -314,58 +300,4 @@ public class WebHookTest{
 		assertTrue(w.getStatus() == HttpStatus.SC_NOT_FOUND);
 	}
 	
-	public WebHookTestServer startWebServer(){
-		try {
-			WebHookTestServer s = new WebHookTestServer(webserverHost, webserverPort);
-			s.server.start();
-			return s;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public void stopWebServer(WebHookTestServer s) throws InterruptedException {
-		try {
-			s.server.stop();
-			// Sleep to let the server shutdown cleanly.
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			Thread.sleep(100);
-		}
-	}
-
-	public WebHookTestProxyServer startProxyServer(){
-		try {
-			WebHookTestProxyServer p = new WebHookTestProxyServer(webserverHost, proxyserverPort);
-			p.server.start();
-			return p;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public WebHookTestProxyServer startProxyServerAuth(String username, String password){
-		try {
-			WebHookTestProxyServer p = new WebHookTestProxyServer(webserverHost, proxyserverPort, 
-					username, password);
-			p.server.start();
-			return p;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public void stopProxyServer(WebHookTestProxyServer p) {
-		try {
-			p.server.stop();
-			// Sleep to let the server shutdown cleanly.
-			Thread.sleep(100);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}	
 }
